@@ -1,0 +1,46 @@
+doctype html  
+html(lang='en')
+    head
+        meta(charset="utf-8")
+        meta(http-equiv="X-UA-Compatible" content="IE=edge")
+        meta(name="viewport" content="width=device-width, initial-scale=1")
+        
+        title= "OAuth Authorization Server"
+
+        link(rel="stylesheet", type="text/css", href="css/style.css")
+        link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css")
+        
+        script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js")
+        script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js")
+    body
+        nav(class="navbar navbar-inverse navbar-fixed-top")
+            div(class="container")
+                div(class="navbar-header")
+                    a(class="navbar-brand" href="/")
+                        | OAuth in Action: 
+                        span(class="label label-danger")
+                            | OAuth Authorization Server
+        
+        div(class="container")
+            div(class="jumbotron")
+                div(class="alert alert-danger" role="alert")
+                    | This is the shell for the <strong>OAuth Authorization Server</strong>. This provides no actual functionality.
+                
+                h2= "Client information:"
+                ul
+                    each client in clients
+                        li
+                            b client_id: #{client.client_id}
+                        li
+                            b client_secret: #{client.client_secret}
+                        li
+                            b scope: #{client.scope}
+                        li
+                            b redirect_uri: #{client.redirect_uri}
+                
+                h2= "Server information:"
+                ul
+                    li
+                        b authorization_endpoint: #{authServer.authorizationEndpoint}
+                    li
+                        b token_endpoint: #{authServer.tokenEndpoint}

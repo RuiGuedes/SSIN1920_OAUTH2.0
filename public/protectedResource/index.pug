@@ -1,0 +1,28 @@
+doctype html  
+html(lang='en')
+    head
+    meta(charset="utf-8")
+    meta(http-equiv="X-UA-Compatible" content="IE=edge")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    
+    title= "OAuth Protected Resource"
+
+    link(rel="stylesheet", type="text/css", href="css/style.css")
+    link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css")
+
+    script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js")
+    script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js")
+
+    body    
+        nav(class="navbar navbar-inverse navbar-fixed-top")
+            div(class="container")
+                div(class="navbar-header")
+                    a(class="navbar-brand" href="/") OAuth in Action: 
+                        span(class="label label-success") OAuth Protected Resource
+        
+        div(class="container")
+            div(class="jumbotron")
+                div(class="alert alert-success" role="alert")
+                    | This is the shell for the <strong>OAuth Protected Resource</strong>. This provides no actual functionality.
+                
+                | To access the resource, send a <code>POST</code> request to <code>http://localhost:9002/resource</code> and include a valid OAuth token.

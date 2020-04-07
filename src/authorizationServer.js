@@ -1,6 +1,5 @@
 let express = require("express");
 let bodyParser = require('body-parser');
-let cons = require('consolidate');
 let __ = require('underscore');
 __.string = require('underscore.string');
 
@@ -9,9 +8,9 @@ let app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.engine('html', cons.underscore);
-app.set('view engine', 'html');
-app.set('views', '../html/authorizationServer');
+app.engine('pug', require('pug').__express)
+app.set('view engine', 'pug');
+app.set('views', '../public/authorizationServer');
 app.set('json spaces', 4);
 
 // authorization server information
@@ -38,7 +37,8 @@ app.get('/', function(req, res) {
 	res.render('index', {clients: clients, authServer: authServer});
 });
 
-app.use('/', express.static('files/authorizationServer'));
+
+app.use('/', express.static('../public/authorizationServer'));
 
 let server = app.listen(9001, 'localhost', function () {
   let host = server.address().address;

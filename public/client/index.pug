@@ -9,6 +9,9 @@ html(lang='en')
 
     link(rel="stylesheet", type="text/css", href="css/style.css")
     link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css")
+
+    script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js")
+    script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js")
   body
     nav(class="navbar navbar-inverse navbar-fixed-top")
         div(class="container")
@@ -47,7 +50,3 @@ html(lang='en')
                     - }
             button(class="btn btn-default" href="/authorize" disabled) Get OAuth Token
             button(class="btn btn-default" href="/fetch_resource" disabled) Get Protected Resource
-    
-    // Scripts
-    script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js")
-    script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js")
