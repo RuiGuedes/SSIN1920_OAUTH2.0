@@ -11,7 +11,8 @@ let refresh_token = null;
 let scope = null;
 
 app.get('/', function (req, res) {
-  res.render('index', { access_token: access_token, refresh_token: refresh_token, scope: scope })
+  res.redirect('http://localhost:9001/authorize')
+  //res.render('index', { access_token: access_token, refresh_token: refresh_token, scope: scope })
 })
 
 app.use('/', express.static('../public/client'));

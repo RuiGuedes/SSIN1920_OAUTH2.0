@@ -10,24 +10,17 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.engine('pug', require('pug').__express)
 app.set('view engine', 'pug');
-app.set('views', '../public/authorizationServer');
+app.set('views', '../../public/AuthServer');
 app.set('json spaces', 4);
 
-// authorization server information
+// Authorization Server Information
 let authServer = {
-	authorizationEndpoint: 'http://localhost:9001/authorize',
+	authorizationEndpoint: 'http://localhost:9001/authorize?',
 	tokenEndpoint: 'http://localhost:9001/token'
 };
 
-// client information
-let clients = [
-	{
-		"client_id": "oauth-client-1",
-		"client_secret": "oauth-client-secret-1",
-		"redirect_uris": ["http://localhost:9000/callback"],
-		"scope": "foo bar"
-	}
-];
+// Load Client Information
+let clients = JSON.parse(require('fs').readFileSync('Clients.json', 'utf8')).clients;
 
 let codes = {};
 
@@ -37,8 +30,11 @@ app.get('/', function(req, res) {
 	res.render('index', {clients: clients, authServer: authServer});
 });
 
+app.get('/authorize', function(req, res) {
+	
+});
 
-app.use('/', express.static('../public/authorizationServer'));
+app.use('/', express.static('../../public/AuthServer'));
 
 let server = app.listen(9001, 'localhost', function () {
   let host = server.address().address;
