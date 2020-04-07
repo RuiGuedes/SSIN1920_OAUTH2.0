@@ -1,0 +1,53 @@
+doctype html  
+html(lang='en')
+  head
+    meta(charset="utf-8")
+    meta(http-equiv="X-UA-Compatible" content="IE=edge")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    
+    title= "OAuth Client"
+
+    link(rel="stylesheet", type="text/css", href="css/style.css")
+    link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css")
+  body
+    nav(class="navbar navbar-inverse navbar-fixed-top")
+        div(class="container")
+            div(class="navbar-header")
+                a(class="navbar-brand" href="/") OAuth Component:
+                    span(span class="label label-primary") OAuth Client
+
+    div(class="container")
+        div( class="jumbotron")
+            div(class="alert alert-info" role="alert")
+                | This is the shell for the <strong>OAuth Client</strong>. This provides no actual functionality.
+            
+            p Access token value:
+                span(class="label label-danger") 
+                    - if (typeof(access_token) == 'undefined' || access_token == null) {
+                        | NONE
+                    - }
+                    - else {
+                        | #{access_token}
+                    - }
+            p Scope value:
+                span(class="label label-danger")
+                    - if (typeof(scope) == 'undefined' || scope == null) {
+                        | NONE
+                    - }
+                    - else {
+                        | #{scope}
+                    - }
+            p Refresh token value:
+                span(class="label label-danger")
+                    - if (typeof(refresh_token) == 'undefined' || refresh_token == null) {
+                        | NONE
+                    - }
+                    - else {
+                        | #{refresh_token}
+                    - }
+            button(class="btn btn-default" href="/authorize" disabled) Get OAuth Token
+            button(class="btn btn-default" href="/fetch_resource" disabled) Get Protected Resource
+    
+    // Scripts
+    script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js")
+    script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js")

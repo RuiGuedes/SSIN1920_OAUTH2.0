@@ -1,21 +1,20 @@
 let express = require("express");
-let cons = require('consolidate');
 
 let app = express();
 
-app.engine('html', cons.underscore);
-app.set('view engine', 'html');
-app.set('views', '../html/client');
+app.engine('pug', require('pug').__express)
+app.set('view engine', 'pug');
+app.set('views', '../public/client');
 
 let access_token = null;
 let refresh_token = null;
 let scope = null;
 
 app.get('/', function (req, res) {
-	res.render('index', {access_token: access_token, refresh_token: refresh_token, scope: scope});
-});
+  res.render('index', { access_token: access_token, refresh_token: refresh_token, scope: scope })
+})
 
-app.use('/', express.static('files/client'));
+app.use('/', express.static('../public/client'));
 
 let server = app.listen(9000, 'localhost', function () {
   let host = server.address().address;
