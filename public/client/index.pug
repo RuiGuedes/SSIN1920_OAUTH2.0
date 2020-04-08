@@ -48,5 +48,5 @@ html(lang='en')
                     - else {
                         | #{refresh_token}
                     - }
-            a(class='btn btn-default' href='http://localhost:9001/authorize') Get OAuth Token                    
+            a(class='btn btn-default' href= `${auth_endpoint}`) Get OAuth Token                    
             button(class="btn btn-default" href="/fetch_resource" disabled) Get Protected Resource
