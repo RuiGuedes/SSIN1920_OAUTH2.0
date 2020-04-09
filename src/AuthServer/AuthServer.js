@@ -94,7 +94,8 @@ app.get('/authorize', function(req, res) {
   // Validate <scope> 
   if(!valid_scope(request.scope))
     console.log("invalid_scope")
-    
+
+  res.redirect('http://localhost:9000/callback')
 });
 
 let codes = {}

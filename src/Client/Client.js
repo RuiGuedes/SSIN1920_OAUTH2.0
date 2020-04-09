@@ -44,7 +44,15 @@ app.get('/', function (req, res) {
             + "scope=" + client.scope + "&"
             + "state=" + computeHash(req.sessionID);
 
+  console.log('Root: ' + req.sessionID);
+
   res.render('index', { access_token: access_token, refresh_token: refresh_token, scope: scope, auth_endpoint: uri })
+})
+
+app.get('/callback', function (req, res) {
+  console.log('Callback: ' + req.sessionID);
+
+  res.render('index', { access_token: access_token, refresh_token: refresh_token, scope: scope })
 })
 
 app.use('/', express.static('../../public/client'));
