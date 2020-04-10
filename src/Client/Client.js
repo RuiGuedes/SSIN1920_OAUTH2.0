@@ -7,6 +7,7 @@ let app = express();
 
 app.use(session({
   secret: 'oauth-client-secret',
+  name: 'client-session',
   resave: 'false',
   saveUninitialized: 'false'
 }))
@@ -44,13 +45,10 @@ app.get('/', function (req, res) {
             + "scope=" + client.scope + "&"
             + "state=" + computeHash(req.sessionID);
 
-  console.log('Root: ' + req.sessionID);
-
   res.render('index', { access_token: access_token, refresh_token: refresh_token, scope: scope, auth_endpoint: uri })
 })
 
 app.get('/callback', function (req, res) {
-  console.log('Callback: ' + req.sessionID);
 
   res.render('index', { access_token: access_token, refresh_token: refresh_token, scope: scope })
 })
@@ -60,6 +58,6 @@ app.use('/', express.static('../../public/client'));
 let server = app.listen(9000, 'localhost', function () {
   let host = server.address().address;
   let port = server.address().port;
-  console.log('OAuth Client is listening at http://%s:%s', host, port);
+  console.log('OAuth Client is listening at http://%s:%s', 'localhost', port);
 });
  

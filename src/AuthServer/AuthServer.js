@@ -13,6 +13,11 @@ app.set('view engine', 'pug');
 app.set('views', '../../public/AuthServer');
 app.set('json spaces', 4);
 
+
+let codes = {}
+
+let requests = {}
+
 // Authorization Server Information
 let authServer = {
 	authorizationEndpoint: 'http://localhost:9001/authorize?',
@@ -43,14 +48,11 @@ function valid_redirect_uri(client_id, redirect_uri) {
   // Retrieve from storage the client redirect uris
   for(client of clients) {
     if(client.client_id == client_id) {
-      let valid_uri = false
       for(uri of client.redirect_uris) {
-        if(redirect_uri == uri) {
-          valid_uri = true
-          break
-        }
+        if(redirect_uri == uri)
+          return true
       }
-      return valid_uri
+      return false
     }
   }
 }
@@ -67,6 +69,18 @@ function valid_scope(scope) {
   return scope.length > 3 ? false : true
 }
 
+app.get('/', function(req, res) {
+	res.render('auth', {clients: clients, authServer: authServer})
+})
+
+app.get('/authentication', function(req, res) {
+	res.render('auth', {clients: clients, authServer: authServer})
+})
+
+app.post('/authentication', function(req, res) {
+	res.render('index', {clients: clients, authServer: authServer})
+})
+
 app.get('/authorize', function(req, res) {
   let request = {
     // Required
@@ -79,32 +93,26 @@ app.get('/authorize', function(req, res) {
     state: req.query.state
   }
 
-  // Validate request
+  // Validate request required fields and redirect uri
   if(request.response_type == null || request.client_id == null || !valid_redirect_uri(request.client_id, request.redirect_uri))
-    console.log("invalid_request")
+    res.redirect(request.redirect_uri + "?error=invalid_request&state=" + request.state)
 
   // Validate <response_type> 
   if(request.response_type != "code")
-    console.log("unsupported_response_type")
+    res.redirect(request.redirect_uri + "?error=unsupported_response_type&state=" + request.state)
 
   // Validate <client_id>
   if(!valid_client(request.client_id))
-    console.log("unauthorized_client")
+    res.redirect(request.redirect_uri + "?error=unauthorized_client&state=" + request.state)
 
   // Validate <scope> 
   if(!valid_scope(request.scope))
-    console.log("invalid_scope")
+    res.redirect(request.redirect_uri + "?error=invalid_scope&state=" + request.state)
 
-  res.redirect('http://localhost:9000/callback')
+  // Authenticate resource owner
+  res.redirect('/authentication')
 });
 
-let codes = {}
-
-let requests = {}
-
-app.get('/', function(req, res) {
-	res.render('index', {clients: clients, authServer: authServer})
-})
 
 app.use('/', express.static('../../public/AuthServer'));
 
