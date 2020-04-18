@@ -1,9 +1,13 @@
 let express = require("express");
 let session = require("express-session")
-let bodyParser = require('body-parser');
 let crypto = require("crypto")
+let bodyParser = require('body-parser')
+let randomstring = require("randomstring");
 
-// App configuration
+///////////////////////
+// App configuration //
+///////////////////////
+
 let app = express();
 
 app.use(session({
@@ -21,6 +25,8 @@ app.set('view engine', 'pug');
 app.set('views', '../../public/AuthServer');
 app.set('json spaces', 4);
 
+app.use('/', express.static('../../public/AuthServer'));
+
 let codes = {}
 let requests = {}
 
@@ -33,6 +39,7 @@ let authServer = {
 // Load Clients and Resource Owners Information
 let clients = JSON.parse(require('fs').readFileSync('Clients.json', 'utf8')).clients;
 let rsrc_owners = JSON.parse(require('fs').readFileSync('ResourceOwners.json', 'utf8'));
+let authCodes = JSON.parse(require('fs').readFileSync('AuthCodes.json', 'utf8'));
 
 /**
  * Computes an hash from the some value
@@ -41,6 +48,74 @@ let rsrc_owners = JSON.parse(require('fs').readFileSync('ResourceOwners.json', '
 function computeHash(value) {
   return crypto.createHash('sha256').update(value).digest('hex');
 }
+
+////////////
+// Routes //
+////////////
+
+app.get('/', function(_, res) {
+	res.render('Index', {clients: clients, authServer: authServer})
+})
+
+////////////////////
+// AUTHENTICATION //
+////////////////////
+
+app.get('/authentication', function(req, res) {    
+	res.render('Auth', {status: req.query.status == null ? "" : "Invalid credentials"})
+})
+
+app.post('/authentication', function(req, res) {
+  let username = req.body.username
+  let password = req.body.password
+  
+  for(owner in rsrc_owners) {
+    if(username == owner && computeHash(password) == rsrc_owners[owner]) {    
+      req.session.rsrc_owner = username            
+      return res.redirect('http://localhost:9001/permissions')      
+    }  
+  }  
+  res.redirect("http://localhost:9001/authentication?status=auth_failed")  
+})
+
+/////////////////
+// PERMISSIONS // 
+/////////////////
+
+app.get('/permissions', function(req, res) {
+  // Determines whether the user is authenticated
+  if(req.session.rsrc_owner == null)
+    return res.redirect('http://localhost:9001/')
+  
+  res.render('AuthDecision', {cliend_id: req.session.request.cliend_id, 
+                              deny_uri: req.session.request.redirect_uri + "?error=access_denied&state=" + req.session.request.state
+                              })
+})
+
+app.post('/permissions', function(req, res) {
+  // Generate code 
+  let auth_code = randomstring.generate(64)
+
+  let d = new Date();
+  let expiration = Math.round(d.getTime() / 1000) + 600
+
+  authCodes[req.session.request.cliend_id] = {"code": auth_code, 
+                                              "expiration": expiration, 
+                                              "redirection_uri": req.session.request.redirect_uri,
+                                              "used": false
+                                            }
+  
+  // Update storage data
+  const fs = require('fs');
+  fs.writeFileSync('AuthCodes.json', JSON.stringify(authCodes));                 
+  
+  res.redirect(req.session.request.redirect_uri + "?code=" + auth_code + "&state=" + req.session.request.state)
+})
+
+
+///////////////
+// AUTHORIZE //
+///////////////
 
 /**
  * Validates client identifier
@@ -84,54 +159,6 @@ function valid_scope(scope) {
   return scope.length > 3 ? false : true
 }
 
-////////////
-// Routes //
-////////////
-
-app.get('/', function(req, res) {
-	res.render('Index', {clients: clients, authServer: authServer})
-})
-
-////////////////////
-// AUTHENTICATION //
-////////////////////
-
-app.get('/authentication', function(req, res) {    
-	res.render('Auth', {status: req.query.status == null ? "" : "Invalid credentials"})
-})
-
-app.post('/authentication', function(req, res) {
-  let username = req.body.username
-  let password = req.body.password
-  
-  for(owner in rsrc_owners) {
-    if(username == owner && computeHash(password) == rsrc_owners[owner]) {
-      req.session.userID = username      
-      res.redirect('http://localhost:9001/permissions')      
-    }  
-  }  
-  res.redirect("http://localhost:9001/authentication?status=auth_failed")  
-})
-
-/////////////////
-// PERMISSIONS // 
-/////////////////
-
-app.get('/permissions', function(req, res) {
-  if(req.session.userID == null)
-    res.redirect('http://localhost:9001/')
-  else
-    res.render('AuthDecision', {cliend_id: req.session.request.cliend_id, 
-                                deny_uri: req.session.request.redirect_uri + "?error=access_denied&state=" + req.session.request.state
-                                })
-})
-
-
-
-///////////////
-// AUTHORIZE //
-///////////////
-
 app.get('/authorize', function(req, res) {
   let request = {
     // Required
@@ -165,8 +192,8 @@ app.get('/authorize', function(req, res) {
   res.redirect('http://localhost:9001/authentication')
 });
 
-app.use('/', express.static('../../public/AuthServer'));
 
+// Start server listening
 let server = app.listen(9001, 'localhost', function () {
   let host = server.address().address;
   let port = server.address().port;

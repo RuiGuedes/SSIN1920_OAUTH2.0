@@ -45,12 +45,26 @@ app.get('/', function (req, res) {
             + "scope=" + client.scope + "&"
             + "state=" + computeHash(req.sessionID);
 
-  res.render('index', { access_token: access_token, refresh_token: refresh_token, scope: scope, auth_endpoint: uri })
+  res.render('index', { auth_code: req.query.code,
+                        access_token: access_token, 
+                        refresh_token: refresh_token, 
+                        scope: scope, 
+                        auth_endpoint: uri })
 })
 
 app.get('/callback', function (req, res) {
+  let uri = authServerEndpoints.authorizationEndpoint + "?"
+            + "response_type=code" + "&"
+            + "client_id=" + client.client_id + "&"
+            + "redirect_uri=" + client.redirect_uris[0] + "&"
+            + "scope=" + client.scope + "&"
+            + "state=" + computeHash(req.sessionID);
 
-  res.render('index', { access_token: access_token, refresh_token: refresh_token, scope: scope })
+  res.render('index', { auth_code: req.query.code,
+                        access_token: access_token, 
+                        refresh_token: refresh_token, 
+                        scope: scope, 
+                        auth_endpoint: uri})
 })
 
 app.use('/', express.static('../../public/client'));
