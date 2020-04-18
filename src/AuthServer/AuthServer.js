@@ -1,9 +1,17 @@
 let express = require("express");
+let session = require("express-session")
 let bodyParser = require('body-parser');
-let __ = require('underscore');
-__.string = require('underscore.string');
+let crypto = require("crypto")
 
+// App configuration
 let app = express();
+
+app.use(session({
+  secret: 'oauth-auth-secret',
+  name: 'auth-session',
+  resave: 'false',
+  saveUninitialized: 'false'
+}))
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -13,9 +21,7 @@ app.set('view engine', 'pug');
 app.set('views', '../../public/AuthServer');
 app.set('json spaces', 4);
 
-
 let codes = {}
-
 let requests = {}
 
 // Authorization Server Information
@@ -24,8 +30,17 @@ let authServer = {
 	tokenEndpoint: 'http://localhost:9001/token'
 };
 
-// Load Clients Information
+// Load Clients and Resource Owners Information
 let clients = JSON.parse(require('fs').readFileSync('Clients.json', 'utf8')).clients;
+let rsrc_owners = JSON.parse(require('fs').readFileSync('ResourceOwners.json', 'utf8'));
+
+/**
+ * Computes an hash from the some value
+ * @param {string} value some value
+ */
+function computeHash(value) {
+  return crypto.createHash('sha256').update(value).digest('hex');
+}
 
 /**
  * Validates client identifier
@@ -69,17 +84,53 @@ function valid_scope(scope) {
   return scope.length > 3 ? false : true
 }
 
+////////////
+// Routes //
+////////////
+
 app.get('/', function(req, res) {
-	res.render('auth', {clients: clients, authServer: authServer})
+	res.render('Index', {clients: clients, authServer: authServer})
 })
 
-app.get('/authentication', function(req, res) {
-	res.render('auth', {clients: clients, authServer: authServer})
+////////////////////
+// AUTHENTICATION //
+////////////////////
+
+app.get('/authentication', function(req, res) {    
+	res.render('Auth', {status: req.query.status == null ? "" : "Invalid credentials"})
 })
 
 app.post('/authentication', function(req, res) {
-	res.render('index', {clients: clients, authServer: authServer})
+  let username = req.body.username
+  let password = req.body.password
+  
+  for(owner in rsrc_owners) {
+    if(username == owner && computeHash(password) == rsrc_owners[owner]) {
+      req.session.userID = username      
+      res.redirect('http://localhost:9001/permissions')      
+    }  
+  }  
+  res.redirect("http://localhost:9001/authentication?status=auth_failed")  
 })
+
+/////////////////
+// PERMISSIONS // 
+/////////////////
+
+app.get('/permissions', function(req, res) {
+  if(req.session.userID == null)
+    res.redirect('http://localhost:9001/')
+  else
+    res.render('AuthDecision', {cliend_id: req.session.request.cliend_id, 
+                                deny_uri: req.session.request.redirect_uri + "?error=access_denied&state=" + req.session.request.state
+                                })
+})
+
+
+
+///////////////
+// AUTHORIZE //
+///////////////
 
 app.get('/authorize', function(req, res) {
   let request = {
@@ -92,7 +143,7 @@ app.get('/authorize', function(req, res) {
     scope: req.query.scope.split(" "),
     state: req.query.state
   }
-
+  
   // Validate request required fields and redirect uri
   if(request.response_type == null || request.client_id == null || !valid_redirect_uri(request.client_id, request.redirect_uri))
     res.redirect(request.redirect_uri + "?error=invalid_request&state=" + request.state)
@@ -110,9 +161,9 @@ app.get('/authorize', function(req, res) {
     res.redirect(request.redirect_uri + "?error=invalid_scope&state=" + request.state)
 
   // Authenticate resource owner
-  res.redirect('/authentication')
+  req.session.request = request
+  res.redirect('http://localhost:9001/authentication')
 });
-
 
 app.use('/', express.static('../../public/AuthServer'));
 
@@ -120,6 +171,6 @@ let server = app.listen(9001, 'localhost', function () {
   let host = server.address().address;
   let port = server.address().port;
 
-  console.log('OAuth Authorization Server is listening at http://%s:%s', host, port);
+  console.log('OAuth Authorization Server is listening at http://%s:%s', 'localhost', port);
 });
  

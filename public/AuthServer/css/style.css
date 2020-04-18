@@ -5,3 +5,7 @@ body {
 .navbar-inverse {
     background-color: #322;
 }
+
+.error {
+    color: red;
+}
