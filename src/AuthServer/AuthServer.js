@@ -89,9 +89,9 @@ app.post('/authentication', function(req, res) {
 app.get('/permissions', function(req, res) {
   // Determines whether the user is authenticated or not
   if(req.session.userID == null)
-    res.redirect('http://localhost:9001/')
+    res.redirect('/')
   else
-    res.render('AuthDecision', {cliend_id: req.session.request.cliend_id,
+    res.render('AuthDecision', {client_id: req.session.request.client_id,
                                 scope: req.session.request.scope,
                                 deny_uri: req.session.request.redirect_uri + "?error=access_denied&state=" + req.session.request.state
                                 })
@@ -201,9 +201,50 @@ app.get('/authorize', function(req, res) {
 // TOKEN ENDPOINT //
 ////////////////////
 
-app.post('/token', function(req, res) {
+app.post('/client_authentication', function(req, res) {
+  let credentials = new Buffer.from(req.headers.authorization.split(" ")[1], 'base64').toString('ascii').split(":")
   
-  return res.send({access_token: ""})
+  for(client of clients) {
+    if(client.client_id == credentials[0] && client.client_secret == credentials[1]) {
+      console.log("12222")
+      req.session.clientID = client.client_id
+      console.log(req.session.clientID)
+      return res.status(200).end()
+    }    
+  }
+
+  res.status(403).end()
+})
+
+app.post('/token', function(req, res) {
+  let credentials = new Buffer.from(req.headers.authorization.split(" ")[1], 'base64').toString('ascii').split(":")
+  
+  for(client of clients) {
+    if(client.client_id == credentials[0] && client.client_secret == credentials[1]) {
+      // After succefull authentication valid token request
+      if(req.body.grant_type != "authorization_code")
+        return res.status(400).send({error: "unsupported_grant_type"})
+
+      if(authCodes[client.client_id] != req.body.code.client_id)
+        return res.status(400).send({error: "unauthorized_client"})
+
+      if(authCodes[client.client_id].code != req.body.code || authCodes[client.client_id].redirect_uri != req.body.redirect_uri)
+        return res.status(400).send({error: "invalid_grant"})
+                
+      // HTTP Response Headers
+      res.setHeader("Cache-Control", "no-store")
+      res.setHeader("Pragma", "no-cache")
+
+      return res.send({access_token: "",
+                      token_type: "",
+                      expires_in: "",
+                      refresh_token: "",
+                      scope: ""
+                      })
+    }               
+  }
+
+  res.status(400).send({error: "invalid_client"})
 })
 
 // Start server listening

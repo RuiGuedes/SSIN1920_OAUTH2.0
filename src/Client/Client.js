@@ -55,6 +55,7 @@ let client = JSON.parse(require('fs').readFileSync('Data.json', 'utf8'));
 // Authorization Server Endpoints
 let authServerEndpoints = {
   tokenEndpoint: 'http://localhost:9001/token',
+  clientAuth: 'http://localhost:9001/client_authentication',
   authorizationEndpoint: 'http://localhost:9001/authorize' + "?"
                         + "response_type=code" + "&"
                         + "client_id=" + client.client_id + "&"
@@ -97,21 +98,24 @@ app.get('/callback', function (req, res) {
 ////////////////////
 
 // TODO 
-app.get('/token', function (_, res) {  
-  // Client authentication 
-
-
+app.get('/token', function (req, res) {  
+  
   axios.post(authServerEndpoints.tokenEndpoint, {
     grant_type: "authorization_code",
-    code: auth_code,
+    code: req.session.auth_code,
     redirect_uri: client.redirect_uris[0],
     client_id: client.client_id
+  }, {
+    auth: {
+      username: client.client_id,
+      password: client.client_secret
+    }
   })
   .then(function (response){
     console.log(response.data)
   })
   .catch(function (error) {
-    console.log(error)
+    console.log("error")
   })
 
   res.redirect('callback')
