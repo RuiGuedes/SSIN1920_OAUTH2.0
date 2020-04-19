@@ -23,7 +23,7 @@ app.set('views', '../../public/Client');
 app.use('/', express.static('../../public/Client'));
 
 ///////////////
-// Utilities //
+// UTILITIES //
 ///////////////
 
 /**

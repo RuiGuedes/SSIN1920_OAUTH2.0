@@ -1,1 +1,8 @@
-[]
+{
+  "oauth-client-1": {
+    "code": "X8UXbzQ6czGVEsjzuLy99ldk4od6qIhl0LeCl8DnNBMWBCVpg9mw7EwCAyoqhxeM",
+    "expiration": 1587320631,
+    "redirection_uri": "http://localhost:9000/callback",
+    "used": false
+  }
+}

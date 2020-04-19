@@ -28,13 +28,10 @@ html(lang='en')
             div(class="jumbotron")                
                 h1= "Permissions"                
                 h3= "is requesting permission to do the following"
-                ul                    
-                    li
-                        b= "Read"                        
-                    li
-                        b= "Write"
-                    li
-                        b= "Delete"
+                ul             
+                    each action in scope
+                        li
+                            b #{action}                        
                 form(method='POST' action='/permissions')
                     a(class='btn btn-default' href= `${deny_uri}`) Deny 
                     button.btn.btn-primary(type='submit') Allow
