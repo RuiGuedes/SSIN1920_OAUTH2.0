@@ -32,7 +32,7 @@ let requests = {}
 
 // Authorization Server Information
 let authServer = {
-	authorizationEndpoint: 'http://localhost:9001/authorize?',
+	authorizationEndpoint: 'http://localhost:9001/authorize',
 	tokenEndpoint: 'http://localhost:9001/token'
 };
 
@@ -189,9 +189,17 @@ app.get('/authorize', function(req, res) {
 
   // Authenticate resource owner
   req.session.request = request
-  res.redirect('http://localhost:9001/authentication')
+  res.redirect('/authentication')
 });
 
+////////////////////
+// TOKEN ENDPOINT //
+////////////////////
+
+app.post('/token', function(req, res) {
+  
+  return res.send({access_token: ""})
+})
 
 // Start server listening
 let server = app.listen(9001, 'localhost', function () {

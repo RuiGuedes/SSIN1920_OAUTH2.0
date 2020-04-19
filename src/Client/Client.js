@@ -1,8 +1,12 @@
+let axios = require('axios');
+let crypto = require("crypto")
 let express = require("express");
 let session = require("express-session")
-let crypto = require("crypto")
 
-// App configuration
+////////////////
+// APP CONFIG //
+////////////////
+
 let app = express();
 
 app.use(session({
@@ -14,20 +18,13 @@ app.use(session({
 
 app.engine('pug', require('pug').__express)
 app.set('view engine', 'pug');
-app.set('views', '../../public/client');
+app.set('views', '../../public/Client');
 
-// Load Clients Information
-let client = JSON.parse(require('fs').readFileSync('Data.json', 'utf8'));
+app.use('/', express.static('../../public/Client'));
 
-// Authorization Server Endpoints
-let authServerEndpoints = {
-	authorizationEndpoint: 'http://localhost:9001/authorize',
-	tokenEndpoint: 'http://localhost:9001/token'
-};
-
-let access_token = null;
-let refresh_token = null;
-let scope = null;
+///////////////
+// Utilities //
+///////////////
 
 /**
  * Computes an hash from the session identifier
@@ -37,41 +34,90 @@ function computeHash(sessionID) {
   return crypto.createHash('sha256').update(sessionID).digest('hex');
 }
 
-app.get('/', function (req, res) {
-  let uri = authServerEndpoints.authorizationEndpoint + "?"
-            + "response_type=code" + "&"
-            + "client_id=" + client.client_id + "&"
-            + "redirect_uri=" + client.redirect_uris[0] + "&"
-            + "scope=" + client.scope + "&"
-            + "state=" + computeHash(req.sessionID);
+/**
+ * Initializes variables associated with current session
+ * @param {object} req Request containing session
+ */
+function initSessionVariables(req) {
+  req.session.scope = req.session.scope == null ? null : req.session.scope
+  req.session.auth_code = req.session.auth_code == null ? null : req.session.auth_code
+  req.session.access_token = req.session.access_token == null ? null : req.session.access_token
+  req.session.refresh_token = req.session.refresh_token == null ? null : req.session.refresh_token
+}
 
-  res.render('index', { auth_code: req.query.code,
-                        access_token: access_token, 
-                        refresh_token: refresh_token, 
-                        scope: scope, 
-                        auth_endpoint: uri })
+//////////////////////
+// LOAD INFORMATION //
+//////////////////////
+
+// Client Information
+let client = JSON.parse(require('fs').readFileSync('Data.json', 'utf8'));
+
+// Authorization Server Endpoints
+let authServerEndpoints = {
+  tokenEndpoint: 'http://localhost:9001/token',
+  authorizationEndpoint: 'http://localhost:9001/authorize' + "?"
+                        + "response_type=code" + "&"
+                        + "client_id=" + client.client_id + "&"
+                        + "redirect_uri=" + client.redirect_uris[0] + "&"
+                        + "scope=" + client.scope	
+};
+
+////////////
+// ROUTES //
+////////////
+
+app.get('/', function (req, res) {
+  // Initialize session variables
+  initSessionVariables(req)  
+  
+  res.render('Index', { auth_code: req.session.auth_code,
+                        access_token: req.session.access_token, 
+                        refresh_token: req.session.refresh_token, 
+                        scope: req.session.scope, 
+                        auth_endpoint: authServerEndpoints.authorizationEndpoint + "&state=" + computeHash(req.sessionID)})
 })
 
 app.get('/callback', function (req, res) {
-  let uri = authServerEndpoints.authorizationEndpoint + "?"
-            + "response_type=code" + "&"
-            + "client_id=" + client.client_id + "&"
-            + "redirect_uri=" + client.redirect_uris[0] + "&"
-            + "scope=" + client.scope + "&"
-            + "state=" + computeHash(req.sessionID);
+  // Validate state
+  if(req.query.state != computeHash(req.sessionID))
+    return res.redirect('/')
 
-  res.render('index', { auth_code: req.query.code,
-                        access_token: access_token, 
-                        refresh_token: refresh_token, 
-                        scope: scope, 
-                        auth_endpoint: uri})
+  // Update authorization code
+  req.session.auth_code = req.query.code == null ? req.session.auth_code : req.query.code
+
+  res.render('Index', { auth_code: req.session.auth_code,
+                        access_token: req.session.access_token, 
+                        refresh_token: req.session.refresh_token, 
+                        scope: req.session.scope, 
+                        auth_endpoint: authServerEndpoints.authorizationEndpoint + "&state=" + computeHash(req.sessionID)})
 })
 
-app.use('/', express.static('../../public/client'));
+////////////////////
+// TOKEN ENDPOINT //
+////////////////////
+
+// TODO 
+app.get('/token', function (_, res) {  
+  // Client authentication 
+
+
+  axios.post(authServerEndpoints.tokenEndpoint, {
+    grant_type: "authorization_code",
+    code: auth_code,
+    redirect_uri: client.redirect_uris[0],
+    client_id: client.client_id
+  })
+  .then(function (response){
+    console.log(response.data)
+  })
+  .catch(function (error) {
+    console.log(error)
+  })
+
+  res.redirect('callback')
+})
 
 let server = app.listen(9000, 'localhost', function () {
-  let host = server.address().address;
-  let port = server.address().port;
-  console.log('OAuth Client is listening at http://%s:%s', 'localhost', port);
+  console.log('OAuth Client is listening at http://localhost:%s', server.address().port);
 });
  

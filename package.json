@@ -5,6 +5,7 @@
 				"express-session": "1.17.0",
 				"fs": "^0.0.1-security",
 				"pug": "2.0.4",
-				"randomstring": "1.1.5"
+				"randomstring": "1.1.5",
+				"axios": "0.19.2"
 		}
 }
