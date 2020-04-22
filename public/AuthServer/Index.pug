@@ -19,7 +19,7 @@ html(lang='en')
         
         div(class="container-fluid")
             div(class="column")
-                h2= "Client information"
+                h2 Client information
                 div(class="info")
                     each client, index in clients
                         h4 
@@ -34,14 +34,14 @@ html(lang='en')
                         if index < (clients.length - 1)
                             br
                 
-                h2= "Server information"
+                h2 Server information
                 div(class="info")
                     p Authorization Endpoint: 
                         span #{authServer.authorizationEndpoint}
                     p Token Endpoint: 
                         span #{authServer.tokenEndpoint}
             div(class="column")
-                h2= "Log Console"
+                h2 Log Console
                 div(class="console")
                     span(class="console-icon") !{"&gt; "}
                     if logs
