@@ -74,6 +74,7 @@ a.btn.btn-primary {
     font-size: x-large;
     padding: 4px 25px;
     margin: 10px 0;
+    width: 375px;
 }
 
 a.btn.btn-primary:hover:not(:disabled)  {
