@@ -1,7 +1,96 @@
-body {
-    padding-top: 60px;
+:root {
+    --bg-dark: rgb(27, 33, 44);
+    --transparent-brand-color: #82c7a515;
+    --semi-transparent-brand-color: #82c7a479;
+    --brand-color: #82c7a5;
+    --text-color: rgb(207, 207, 207);
+    --dark-grey: #4e5567;
 }
 
-.navbar-inverse {
-    background-color: #232;
+html {
+    height: 100%;
+}
+
+html body {
+    font-size: 16px;
+    padding-top: 60px;
+    min-height: 100%;
+    background-color: var(--bg-dark);
+    color: var(--text-color);
+}
+
+.navbar.navbar-fixed-top {
+    border-bottom: 2px solid var(--brand-color);
+}
+
+.navbar .navbar-brand {
+    color: var(--text-color);
+}
+
+.navbar-brand:hover {
+    color: inherit;
+    cursor: inherit;
+}
+
+.navbar-brand span {
+    font-size: 22px;
+    color: var(--brand-color);
+    font-style: italic;
+}
+
+body h2 {
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    border-bottom: 2px solid var(--semi-transparent-brand-color);
+    margin-bottom: 0;
+    padding: 0 0 10px 10px;
+}
+
+.column {
+    float: left;
+    width: 50%;
+    min-height: 90vh;
+    padding: 25px;
+}
+
+.info {
+    padding: 20px;
+    background-color: var(--transparent-brand-color);
+}
+
+.info span{
+    color: var(--brand-color);
+    font-weight: bold;
+}
+
+.console {
+    font-size: 14px;
+    font-family:'Courier New', Courier, monospace;
+    height: 78vh;
+    padding: 10px;
+    overflow-y: scroll; 
+    background-color: var(--transparent-brand-color);
+}
+
+.console-icon {
+    color: yellowgreen;
+}
+
+.error {
+    color: red;
+}
+
+/* ScrollBar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px grey; 
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--brand-color); 
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--semi-transparent-brand-color); 
 }
