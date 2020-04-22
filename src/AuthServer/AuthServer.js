@@ -1,8 +1,9 @@
-let crypto = require("crypto")
 let express = require("express");
+let storage = require("../Storage.js")
 let bodyParser = require('body-parser')
 let session = require("express-session")
-let randomstring = require("randomstring");
+let randomstring = require("randomstring")
+let utilities = require("../Utilities.js")
 
 ////////////////
 // APP CONFIG //
@@ -22,48 +23,18 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.engine('pug', require('pug').__express)
 app.set('view engine', 'pug');
-app.set('views', '../../public/AuthServer');
+app.set('views', '../public/AuthServer');
 app.set('json spaces', 4);
 
-app.use('/', express.static('../../public/AuthServer'));
+app.use('/', express.static('../public/AuthServer'));
 
 ///////////////
-// UTILITIES //
+// ENDPOINTS //
 ///////////////
-
-/**
- * Computes an hash from the some value
- * @param {string} value some value
- */
-function computeHash(value) {
-  return crypto.createHash('sha256').update(value).digest('hex');
-}
-
-//////////////////////
-// LOAD INFORMATION //
-//////////////////////
-
-let clients = JSON.parse(require('fs').readFileSync('Clients.json', 'utf8')).clients;
-let rsrcOwners = JSON.parse(require('fs').readFileSync('ResourceOwners.json', 'utf8'));
-let authCodes = JSON.parse(require('fs').readFileSync('AuthCodes.json', 'utf8'));
-
-// Authorization Server Information
-let authServer = {
-	authorizationEndpoint: 'http://localhost:9001/authorize',
-	tokenEndpoint: 'http://localhost:9001/token'
-};
-
-////////////
-// ROUTES //
-////////////
 
 app.get('/', function(_, res) {
-	res.render('Index', {clients: clients, authServer: authServer})
+	res.render('Index', {clients: storage.clients, authServer: storage.authServerEndpoints})
 })
-
-////////////////////
-// AUTHENTICATION //
-////////////////////
 
 app.get('/authentication', function(req, res) {    
   if(req.session.userID != null)
@@ -74,17 +45,13 @@ app.get('/authentication', function(req, res) {
 
 app.post('/authentication', function(req, res) { 
   // Check if credentials are valid or not
-  if(rsrcOwners[req.body.username] != null && computeHash(req.body.password) == rsrcOwners[req.body.username]) {    
+  if(storage.rsrcOwners[req.body.username] != null && utilities.computeHash(req.body.password) == storage.rsrcOwners[req.body.username]) {    
     req.session.userID = req.body.username            
     res.redirect('/permissions') 
   }
   else
     res.redirect("/authentication?status=auth_failed")  
 })
-
-/////////////////
-// PERMISSIONS // 
-/////////////////
 
 app.get('/permissions', function(req, res) {
   // Determines whether the user is authenticated or not
@@ -105,64 +72,17 @@ app.post('/permissions', function(req, res) {
   let d = new Date();
   let expiration = Math.round(d.getTime() / 1000) + 600
 
-  authCodes[req.session.request.client_id] = {"code": auth_code, 
+  storage.authCodes[req.session.request.client_id] = {"code": auth_code, 
                                               "expiration": expiration, 
                                               "redirection_uri": req.session.request.redirect_uri,
                                               "used": false
                                             }
                                    
   // Update storage data
-  require('fs').writeFileSync('AuthCodes.json', JSON.stringify(authCodes, null, 2));                 
+  require('fs').writeFileSync('AuthServer/json/AuthCodes.json', JSON.stringify(storage.authCodes, null, 2));                 
   
   res.redirect(req.session.request.redirect_uri + "?code=" + auth_code + "&state=" + req.session.request.state)
 })
-
-
-///////////////
-// AUTHORIZE //
-///////////////
-
-/**
- * Validates client identifier
- * @param {string} client_id client identifier
- */
-function validClient(client_id) {
-  for(client of clients) {
-    if(client.client_id == client_id) 
-      return true
-  }
-  return false
-}
-
-/**
- * Validates request redirect uri
- * @param {string} client_id client identifier
- * @param {string} redirect_uri request redirect uri
- */
-function validRedirectUri(client_id, redirect_uri) {
-  // Retrieve from storage the client redirect uris
-  for(client of clients) {
-    if(client.client_id == client_id) {
-      for(uri of client.redirect_uris) {
-        if(redirect_uri == uri)
-          return true
-      }
-      return false
-    }
-  }
-}
-
-/**
- * Validate request scope
- * @param {Array} scope scope array
- */
-function validScope(scope) {
-  for(elem of scope) {
-    if(elem != "read" && elem != "write" && elem != "delete")
-      return false
-  }
-  return scope.length > 3 ? false : true
-}
 
 app.get('/authorize', function(req, res) {
   let request = {
@@ -177,7 +97,7 @@ app.get('/authorize', function(req, res) {
   }
   
   // Validate request required fields and redirect uri
-  if(request.response_type == null || request.client_id == null || !validRedirectUri(request.client_id, request.redirect_uri))
+  if(request.response_type == null || request.client_id == null || !utilities.validRedirectUri(request.client_id, request.redirect_uri, storage.clients))
     res.redirect(request.redirect_uri + "?error=invalid_request&state=" + request.state)
 
   // Validate <response_type> 
@@ -185,11 +105,11 @@ app.get('/authorize', function(req, res) {
     res.redirect(request.redirect_uri + "?error=unsupported_response_type&state=" + request.state)
 
   // Validate <client_id>
-  if(!validClient(request.client_id))
+  if(!utilities.validClient(request.client_id, storage.clients))
     res.redirect(request.redirect_uri + "?error=unauthorized_client&state=" + request.state)
 
   // Validate <scope> 
-  if(!validScope(request.scope))
+  if(!utilities.validScope(request.scope))
     res.redirect(request.redirect_uri + "?error=invalid_scope&state=" + request.state)
 
   // Authenticate resource owner
@@ -197,38 +117,19 @@ app.get('/authorize', function(req, res) {
   res.redirect('/authentication')
 });
 
-////////////////////
-// TOKEN ENDPOINT //
-////////////////////
-
-app.post('/client_authentication', function(req, res) {
-  let credentials = new Buffer.from(req.headers.authorization.split(" ")[1], 'base64').toString('ascii').split(":")
-  
-  for(client of clients) {
-    if(client.client_id == credentials[0] && client.client_secret == credentials[1]) {
-      console.log("12222")
-      req.session.clientID = client.client_id
-      console.log(req.session.clientID)
-      return res.status(200).end()
-    }    
-  }
-
-  res.status(403).end()
-})
-
 app.post('/token', function(req, res) {
   let credentials = new Buffer.from(req.headers.authorization.split(" ")[1], 'base64').toString('ascii').split(":")
   
-  for(client of clients) {
+  for(client of storage.clients) {
     if(client.client_id == credentials[0] && client.client_secret == credentials[1]) {
       // After succefull authentication valid token request
       if(req.body.grant_type != "authorization_code")
         return res.status(400).send({error: "unsupported_grant_type"})
 
-      if(authCodes[client.client_id] != req.body.code.client_id)
+      if(storage.authCodes[client.client_id] != req.body.code.client_id)
         return res.status(400).send({error: "unauthorized_client"})
 
-      if(authCodes[client.client_id].code != req.body.code || authCodes[client.client_id].redirect_uri != req.body.redirect_uri)
+      if(storage.authCodes[client.client_id].code != req.body.code || storage.authCodes[client.client_id].redirect_uri != req.body.redirect_uri)
         return res.status(400).send({error: "invalid_grant"})
                 
       // HTTP Response Headers
@@ -247,7 +148,22 @@ app.post('/token', function(req, res) {
   res.status(400).send({error: "invalid_client"})
 })
 
-// Start server listening
+app.post('/client_authentication', function(req, res) {
+  let credentials = new Buffer.from(req.headers.authorization.split(" ")[1], 'base64').toString('ascii').split(":")
+  
+  for(client of storage.clients) {
+    if(client.client_id == credentials[0] && client.client_secret == credentials[1]) {
+      console.log("12222")
+      req.session.clientID = client.client_id
+      console.log(req.session.clientID)
+      return res.status(200).end()
+    }    
+  }
+
+  res.status(403).end()
+})
+
+// Initialize server
 let server = app.listen(9001, 'localhost', function () {
   console.log('OAuth Authorization Server is listening at http://localhost:%s', server.address().port)
 });

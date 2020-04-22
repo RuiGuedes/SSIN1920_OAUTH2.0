@@ -1,7 +1,5 @@
 let express = require("express");
 let bodyParser = require('body-parser');
-let __ = require('underscore');
-let cors = require('cors');
 
 let app = express();
 
@@ -9,11 +7,10 @@ app.use(bodyParser.urlencoded({ extended: true })); // support form-encoded bodi
 
 app.engine('pug', require('pug').__express)
 app.set('view engine', 'pug');
-app.set('views', '../public/protectedResource');
+app.set('views', '../../public/protectedResource');
 app.set('json spaces', 4);
 
-app.use('/', express.static('../public/protectedResource'));
-app.use(cors());
+app.use('/', express.static('../../public/protectedResource'));
 
 let resource = {
 	"name": "Protected Resource",
