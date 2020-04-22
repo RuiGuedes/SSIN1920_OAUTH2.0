@@ -58,7 +58,7 @@ let authServer = {
 ////////////
 
 app.get('/', function(_, res) {
-	res.render('Index', {clients: clients, authServer: authServer})
+	res.render('Index', {clients: clients, authServer: authServer, logs: ["lkdnsdvsev", "dksvklsdv", "anknkwelnvl", "lkdnsdvsev", "dksvklsdv", "anknkwelnvl"]})
 })
 
 ////////////////////

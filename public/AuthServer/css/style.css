@@ -1,5 +1,10 @@
+html {
+    height: 100%;
+}
+
 body {
     padding-top: 60px;
+    min-height: 100%;
 }
 
 .navbar-inverse {
@@ -8,4 +13,27 @@ body {
 
 .error {
     color: red;
+}
+
+body > .container-fluid {
+    min-height: 90vh;
+}
+
+.column {
+    float: left;
+    width: 50%;
+    padding: 0px 10px;
+}
+
+.console {
+    border-radius: 6px;
+    background-color: #222;
+    color: whitesmoke;
+    height: 90vh;
+    padding: 10px;
+    overflow-y: scroll;
+}
+
+.console-icon {
+    color: yellowgreen;
 }
