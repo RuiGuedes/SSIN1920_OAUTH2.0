@@ -13,43 +13,39 @@ html(lang='en')
         script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js")
         script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js")
     body
-        nav(class="navbar navbar-inverse navbar-fixed-top")
-            div(class="container-fluid")
-                div(class="navbar-header")
-                    a(class="navbar-brand" href="/")
-                        | OAuth in Action: 
-                        span(class="label label-danger")
-                            | OAuth Authorization Server
+        nav(class="navbar navbar-fixed-top")
+            a(class="navbar-brand" href="/") 
+                span OAuth Authorization Server
         
         div(class="container-fluid")
             div(class="column")
-                div(class="jumbotron")
-                    div(class="alert alert-danger" role="alert")
-                        | This is the shell for the <strong>OAuth Authorization Server</strong>. This provides no actual functionality.
-                    
-                    h2= "Client information:"
-                    ul
-                        each client in clients
-                            li
-                                b client_id: #{client.client_id}
-                            li
-                                b client_secret: #{client.client_secret}
-                            li
-                                b scope: #{client.scope}
-                            li
-                                b redirect_uri: #{client.redirect_uri}
-                    
-                    h2= "Server information:"
-                    ul
-                        li
-                            b authorization_endpoint: #{authServer.authorizationEndpoint}
-                        li
-                            b token_endpoint: #{authServer.tokenEndpoint}
-            div(class="column")
-                div(class="console")
-                    each line in logs
-                        span(class="console-icon")
-                            | !{"-&gt; "}
-                        | #{line} 
-                        br
+                h2= "Client information"
+                div(class="client-info")
+                    each client, index in clients
+                        h4 
+                            span #{client.client_id}:
+                        ul
+                            li Client Secret: 
+                                span #{client.client_secret}
+                            li Scope: 
+                                span #{client.scope}
+                            li Redirect URI: 
+                                span #{client.redirect_uris}
+                        if index < (clients.length - 1)
+                            br
                 
+                h2= "Server information"
+                div(class="server-info")
+                    p Authorization Endpoint: 
+                        span #{authServer.authorizationEndpoint}
+                    p Token Endpoint: 
+                        span #{authServer.tokenEndpoint}
+            div(class="column")
+                h2= "Log Console"
+                div(class="console")
+                    span(class="console-icon") !{"&gt; "}
+                    if logs
+                        each line in logs
+                            | #{line} 
+                            br
+                            span(class="console-icon") !{"&gt; "}

@@ -58,7 +58,11 @@ let authServer = {
 ////////////
 
 app.get('/', function(_, res) {
-	res.render('Index', {clients: clients, authServer: authServer, logs: ["lkdnsdvsev", "dksvklsdv", "anknkwelnvl", "lkdnsdvsev", "dksvklsdv", "anknkwelnvl"]})
+	res.render('Index', {clients: clients, authServer: authServer, logs: [
+    "cd .\\src\\AuthServer\\", 
+    "node .\\AuthServer.js", 
+    "OAuth Authorization Server is listening at http://localhost:9001",
+    ]})
 })
 
 ////////////////////
