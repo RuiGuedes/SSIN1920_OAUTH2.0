@@ -52,17 +52,17 @@ body h2 {
     padding: 25px;
 }
 
-.client-info, .server-info, .login {
+.info, .login {
     padding: 20px;
     background-color: var(--transparent-brand-color);
 }
 
-.client-info span, .server-info span {
+.info span{
     color: var(--brand-color);
     font-weight: bold;
 }
 
-.client-info form {
+.info form {
     text-align: right;
 }
 

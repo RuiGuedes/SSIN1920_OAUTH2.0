@@ -20,7 +20,7 @@ html(lang='en')
         div(class="container-fluid")
             div(class="column")
                 h2= "Client information"
-                div(class="client-info")
+                div(class="info")
                     each client, index in clients
                         h4 
                             span #{client.client_id}:
@@ -35,7 +35,7 @@ html(lang='en')
                             br
                 
                 h2= "Server information"
-                div(class="server-info")
+                div(class="info")
                     p Authorization Endpoint: 
                         span #{authServer.authorizationEndpoint}
                     p Token Endpoint: 
