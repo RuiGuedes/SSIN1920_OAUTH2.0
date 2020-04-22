@@ -1,7 +1,8 @@
 let axios = require('axios');
-let crypto = require("crypto")
 let express = require("express");
 let session = require("express-session")
+let utilities = require("../Utilities.js")
+let storage = require("../Storage.js")
 
 ////////////////
 // APP CONFIG //
@@ -18,21 +19,9 @@ app.use(session({
 
 app.engine('pug', require('pug').__express)
 app.set('view engine', 'pug');
-app.set('views', '../../public/Client');
+app.set('views', '../public/Client');
 
-app.use('/', express.static('../../public/Client'));
-
-///////////////
-// UTILITIES //
-///////////////
-
-/**
- * Computes an hash from the session identifier
- * @param {string} sessionID Session Identifier
- */
-function computeHash(sessionID) {
-  return crypto.createHash('sha256').update(sessionID).digest('hex');
-}
+app.use('/', express.static('../public/Client'));
 
 /**
  * Initializes variables associated with current session
@@ -45,27 +34,9 @@ function initSessionVariables(req) {
   req.session.refresh_token = req.session.refresh_token == null ? null : req.session.refresh_token
 }
 
-//////////////////////
-// LOAD INFORMATION //
-//////////////////////
-
-// Client Information
-let client = JSON.parse(require('fs').readFileSync('Data.json', 'utf8'));
-
-// Authorization Server Endpoints
-let authServerEndpoints = {
-  tokenEndpoint: 'http://localhost:9001/token',
-  clientAuth: 'http://localhost:9001/client_authentication',
-  authorizationEndpoint: 'http://localhost:9001/authorize' + "?"
-                        + "response_type=code" + "&"
-                        + "client_id=" + client.client_id + "&"
-                        + "redirect_uri=" + client.redirect_uris[0] + "&"
-                        + "scope=" + client.scope	
-};
-
-////////////
-// ROUTES //
-////////////
+///////////////
+// ENDPOINTS //
+///////////////
 
 app.get('/', function (req, res) {
   // Initialize session variables
@@ -75,12 +46,16 @@ app.get('/', function (req, res) {
                         access_token: req.session.access_token, 
                         refresh_token: req.session.refresh_token, 
                         scope: req.session.scope, 
-                        auth_endpoint: authServerEndpoints.authorizationEndpoint + "&state=" + computeHash(req.sessionID)})
+                        auth_endpoint: storage.authServerEndpoints.authorizationEndpoint + "?"
+                                      + "response_type=code" + "&"
+                                      + "client_id=" + storage.client.client_id + "&"
+                                      + "redirect_uri=" + storage.client.redirect_uris[0] + "&"
+                                      + "scope=" + storage.client.scope	 + "&state=" + utilities.computeHash(req.sessionID)})
 })
 
 app.get('/callback', function (req, res) {
   // Validate state
-  if(req.query.state != computeHash(req.sessionID))
+  if(req.query.state != utilities.computeHash(req.sessionID))
     return res.redirect('/')
 
   // Update authorization code
@@ -90,25 +65,25 @@ app.get('/callback', function (req, res) {
                         access_token: req.session.access_token, 
                         refresh_token: req.session.refresh_token, 
                         scope: req.session.scope, 
-                        auth_endpoint: authServerEndpoints.authorizationEndpoint + "&state=" + computeHash(req.sessionID)})
+                        auth_endpoint: storage.authServerEndpoints.authorizationEndpoint + "?"
+                                      + "response_type=code" + "&"
+                                      + "client_id=" + storage.client.client_id + "&"
+                                      + "redirect_uri=" + storage.client.redirect_uris[0] + "&"
+                                      + "scope=" + storage.client.scope	 + "&state=" + utilities.computeHash(req.sessionID)})
 })
 
-////////////////////
-// TOKEN ENDPOINT //
-////////////////////
-
-// TODO 
+// TODO - Complete logic
 app.get('/token', function (req, res) {  
   
-  axios.post(authServerEndpoints.tokenEndpoint, {
+  axios.post(storage.authServerEndpoints.tokenEndpoint, {
     grant_type: "authorization_code",
     code: req.session.auth_code,
-    redirect_uri: client.redirect_uris[0],
-    client_id: client.client_id
+    redirect_uri: storage.client.redirect_uris[0],
+    client_id: storage.client.client_id
   }, {
     auth: {
-      username: client.client_id,
-      password: client.client_secret
+      username: storage.client.client_id,
+      password: storage.client.client_secret
     }
   })
   .then(function (response){
@@ -121,6 +96,7 @@ app.get('/token', function (req, res) {
   res.redirect('callback')
 })
 
+// Initialize server
 let server = app.listen(9000, 'localhost', function () {
   console.log('OAuth Client is listening at http://localhost:%s', server.address().port);
 });
