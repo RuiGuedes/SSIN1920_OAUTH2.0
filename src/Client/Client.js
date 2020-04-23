@@ -38,10 +38,7 @@ function initSessionVariables(req) {
 // ENDPOINTS //
 ///////////////
 
-app.get('/', function (req, res) {
-  // Initialize session variables
-  initSessionVariables(req)  
-  
+app.get('/', function (req, res) {  
   res.render('Index', { auth_code: req.session.auth_code,
                         access_token: req.session.access_token, 
                         refresh_token: req.session.refresh_token, 
@@ -54,7 +51,7 @@ app.get('/', function (req, res) {
 })
 
 app.get('/callback', function (req, res) {
-  // Validate state
+  // Validate redirection through validation of the state 
   if(req.query.state != utilities.computeHash(req.sessionID))
     return res.redirect('/')
 

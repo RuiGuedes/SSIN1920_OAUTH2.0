@@ -36,54 +36,6 @@ app.get('/', function(_, res) {
 	res.render('Index', {clients: storage.clients, authServer: storage.authServerEndpoints})
 })
 
-app.get('/authentication', function(req, res) {    
-  if(req.session.userID != null)
-    res.redirect('/permissions')
-  else
-	  res.render('Auth', {status: req.query.status == null ? "" : "Invalid credentials"})
-})
-
-app.post('/authentication', function(req, res) { 
-  // Check if credentials are valid or not
-  if(storage.rsrcOwners[req.body.username] != null && utilities.computeHash(req.body.password) == storage.rsrcOwners[req.body.username]) {    
-    req.session.userID = req.body.username            
-    res.redirect('/permissions') 
-  }
-  else
-    res.redirect("/authentication?status=auth_failed")  
-})
-
-app.get('/permissions', function(req, res) {
-  // Determines whether the user is authenticated or not
-  if(req.session.userID == null)
-    res.redirect('/')
-  else
-    res.render('AuthDecision', {client_id: req.session.request.client_id,
-                                scope: req.session.request.scope,
-                                deny_uri: req.session.request.redirect_uri + "?error=access_denied&state=" + req.session.request.state
-                                })
-})
-
-app.post('/permissions', function(req, res) {
-  // Generate authorization code 
-  let auth_code = randomstring.generate(64)
-
-  // Generate code expiration date
-  let d = new Date();
-  let expiration = Math.round(d.getTime() / 1000) + 600
-
-  storage.authCodes[req.session.request.client_id] = {"code": auth_code, 
-                                              "expiration": expiration, 
-                                              "redirection_uri": req.session.request.redirect_uri,
-                                              "used": false
-                                            }
-                                   
-  // Update storage data
-  require('fs').writeFileSync('AuthServer/json/AuthCodes.json', JSON.stringify(storage.authCodes, null, 2));                 
-  
-  res.redirect(req.session.request.redirect_uri + "?code=" + auth_code + "&state=" + req.session.request.state)
-})
-
 app.get('/authorize', function(req, res) {
   let request = {
     // Required
@@ -117,6 +69,56 @@ app.get('/authorize', function(req, res) {
   res.redirect('/authentication')
 });
 
+app.get('/authentication', function(req, res) {    
+  if(req.session.userID == req.session.request.state)
+    res.redirect('/permissions')
+  else
+	  res.render('Auth', {status: req.query.status == null ? "" : "Invalid credentials"})
+})
+
+app.post('/authentication', function(req, res) { 
+  // Check if credentials are valid or not
+  let username = req.body.username
+
+  if(storage.rsrcOwners[username] != null && utilities.computeHash(req.body.password) == storage.rsrcOwners[username]) {    
+    req.session.userID = req.session.request.state           
+    res.redirect('/permissions') 
+  }
+  else
+    res.redirect("/authentication?status=auth_failed")  
+})
+
+app.get('/permissions', function(req, res) {
+  // Determines whether the user is authenticated or not
+  if(req.session.userID != req.session.request.state)
+    res.redirect('/')
+  else
+    res.render('AuthDecision', {client_id: req.session.request.client_id,
+                                scope: req.session.request.scope,
+                                deny_uri: req.session.request.redirect_uri + "?error=access_denied&state=" + req.session.request.state
+                                })
+})
+
+app.post('/permissions', function(req, res) {
+  // Generate authorization code 
+  let auth_code = randomstring.generate(64)
+
+  // Generate code expiration date
+  let d = new Date();
+  let expiration = Math.round(d.getTime() / 1000) + 600
+// TODO - Store allowed scope
+  storage.authCodes[req.session.request.client_id] = {"code": auth_code, 
+                                              "expiration": expiration, 
+                                              "redirection_uri": req.session.request.redirect_uri,
+                                              "used": false
+                                            }
+                                            
+  // Update storage data
+  require('fs').writeFileSync('AuthServer/json/AuthCodes.json', JSON.stringify(storage.authCodes, null, 2));                 
+  
+  res.redirect(req.session.request.redirect_uri + "?code=" + auth_code + "&state=" + req.session.request.state)
+})
+
 app.post('/token', function(req, res) {
   let credentials = new Buffer.from(req.headers.authorization.split(" ")[1], 'base64').toString('ascii').split(":")
   
@@ -146,21 +148,6 @@ app.post('/token', function(req, res) {
   }
 
   res.status(400).send({error: "invalid_client"})
-})
-
-app.post('/client_authentication', function(req, res) {
-  let credentials = new Buffer.from(req.headers.authorization.split(" ")[1], 'base64').toString('ascii').split(":")
-  
-  for(client of storage.clients) {
-    if(client.client_id == credentials[0] && client.client_secret == credentials[1]) {
-      console.log("12222")
-      req.session.clientID = client.client_id
-      console.log(req.session.clientID)
-      return res.status(200).end()
-    }    
-  }
-
-  res.status(403).end()
 })
 
 // Initialize server
