@@ -13,25 +13,42 @@ html(lang='en')
         script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js")
         script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js")
     body
-        nav(class="navbar navbar-inverse navbar-fixed-top")
-            div(class="container")
-                div(class="navbar-header")
-                    a(class="navbar-brand" href="/")
-                        | OAuth in Action: 
-                        span(class="label label-danger")
-                            | OAuth Authorization Server
+        nav(class="navbar navbar-fixed-top")
+            a(class="navbar-brand" href="/") 
+                span OAuth Authorization Server
         
-        div(class="container")
-            
-            div(class="alert alert-success" role="alert")
-                <strong>Login successfull.</strong>
-            div(class="jumbotron")                
-                h1= "Permissions"                
-                h3= "is requesting permission to do the following"
-                ul             
-                    each action in scope
-                        li
-                            b #{action}                        
-                form(method='POST' action='/permissions')
-                    a(class='btn btn-default' href= `${deny_uri}`) Deny 
-                    button.btn.btn-primary(type='submit') Allow
+        div(class="container-fluid")
+            div(class="column")
+                if status
+                    div(class="alert alert-success" role="alert")
+                        b #{status}
+
+                h2 Permissions
+                div(class="info")
+                    h4 Is requesting permission to do the following:
+                    form(method='POST' action='/permissions')
+                        input(type='checkbox' id='read' name="permissions1" value="Read" checked)
+                        label(for="read")
+                            span Read
+                        br
+                        input(type='checkbox' id='write' name="permissions2" value="Write" checked)
+                        label(for="write")
+                            span Write
+                        br
+                        input(type='checkbox' id='delete' name="permissions3" value="Delete" checked)
+                        label(for="delete")
+                            span Delete
+                        br                    
+                        div(class="buttons")
+                            a(class='btn btn-default' href= `${deny_uri}`) Deny 
+                            button.btn.btn-primary(type='submit') Allow
+
+            div(class="column")
+                h2 Log Console
+                div(class="console")
+                    span(class="console-icon") !{"&gt; "}
+                    if logs
+                        each line in logs
+                            | #{line} 
+                            br
+                            span(class="console-icon") !{"&gt; "}

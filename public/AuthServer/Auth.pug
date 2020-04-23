@@ -13,24 +13,30 @@ html(lang='en')
         script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js")
         script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js")
     body
-        nav(class="navbar navbar-inverse navbar-fixed-top")
-            div(class="container")
-                div(class="navbar-header")
-                    a(class="navbar-brand" href="/")
-                        | OAuth in Action: 
-                        span(class="label label-danger")
-                            | OAuth Authorization Server
+        nav(class="navbar navbar-fixed-top")
+            a(class="navbar-brand" href="/") 
+                span OAuth Authorization Server
         
-        div(class="container")
-            div(class="jumbotron")
-                h1= "Authentication"
-                
-                form(method='POST' action='/authentication')
-                    div.form-group
-                        label(for='username') Username:
-                        input#name.form-control(type='text', name='username', value="JohnDoe")
-                    div.form-group
-                        label(for='pw') Password:
-                        input#pw.form-control(type='password' name='password' value="1234")
-                    p(class="error") #{status}
-                    button.btn.btn-primary(type='submit') Sign In
+        div(class="container-fluid")
+            div(class="column")
+                h2 Authentication
+                div(class="login")
+                    form(method='POST' action='/authentication')
+                        div.form-group
+                            label(for='username', hidden="true") Username:
+                            input#name.form-control(type='text', name='username', value="JohnDoe", placeholder="Username")
+                        div.form-group
+                            label(for='pw', hidden="true") Password:
+                            input#pw.form-control(type='password' name='password' value="1234", placeholder="Password")
+                        p(class="error") #{status}
+                        button.btn.btn-primary(type='submit') Sign In
+            
+            div(class="column")
+                h2 Log Console
+                div(class="console")
+                    span(class="console-icon") !{"&gt; "}
+                    if logs
+                        each line in logs
+                            | #{line} 
+                            br
+                            span(class="console-icon") !{"&gt; "}

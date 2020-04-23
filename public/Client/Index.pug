@@ -13,55 +13,54 @@ html(lang='en')
     script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js")
     script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js")
   body
-    nav(class="navbar navbar-inverse navbar-fixed-top")
-        div(class="container")
-            div(class="navbar-header")
-                a(class="navbar-brand" href="/") OAuth Component:
-                    span(span class="label label-primary") OAuth Client
+    nav(class="navbar navbar-fixed-top")
+        a(class="navbar-brand" href="/") 
+            span OAuth Client
 
-    div(class="container")
-        div( class="jumbotron")
-            div(class="alert alert-info" role="alert")
-                | This is the shell for the <strong>OAuth Client</strong>. This provides no actual functionality.
-            
-            p Authorization code value:
-                - var class_name = auth_code == null ? "label label-danger" : "label label-success"
-                span(class=class_name) 
-                    - if (typeof(auth_code) == 'undefined' || auth_code == null) {
+    div(class="container-fluid")
+        div(class="column")
+            h2 Information
+            div(class="info")
+                h4 Authorization code value: 
+                p
+                    if (typeof(auth_code) == 'undefined' || auth_code == null)
                         | None
-                    - }
-                    - else {
+                    else 
                         | #{auth_code}
-                    - }
-            p Access token value:
-                span(class="label label-danger") 
-                    - if (typeof(access_token) == 'undefined' || access_token == null) {
+                h4 Access token value: 
+                p
+                    if (typeof(access_token) == 'undefined' || access_token == null)
                         | None
-                    - }
-                    - else {
+                    else
                         | #{access_token}
-                    - }
-            p Scope value:
-                span(class="label label-danger")
-                    - if (typeof(scope) == 'undefined' || scope == null) {
+                h4 Scope value: 
+                p
+                    if (typeof(scope) == 'undefined' || scope == null)
                         | None
-                    - }
-                    - else {
+                    else
                         | #{scope}
-                    - }
-            p Refresh token value:
-                span(class="label label-danger")
-                    - if (typeof(refresh_token) == 'undefined' || refresh_token == null) {
+                h4 Refresh token value: 
+                p
+                    if (typeof(refresh_token) == 'undefined' || refresh_token == null)
                         | None
-                    - }
-                    - else {
+                    else
                         | #{refresh_token}
-                    - }
-            a(class='btn btn-default' href= `${auth_endpoint}`) Get OAuth Authorization Code 
-            - if (auth_code == null) {
-                a(class='btn btn-default' disabled) Get OAuth Token     
-            - }
-            - else {
-                a(class='btn btn-default' href= "http://localhost:9000/token") Get OAuth Token     
-            - }           
-            button(class="btn btn-default" href="/fetch_resource" disabled) Get Protected Resource
+                div(class="buttons")
+                    a(class='btn btn-primary' href= `${auth_endpoint}`) Get OAuth Authorization Code
+                    br
+                    if (auth_code == null)
+                        a(class='btn btn-primary' disabled) Get OAuth Token
+                    else 
+                        a(class='btn btn-primary' href= "http://localhost:9000/token") Get OAuth Token
+                    br
+                    a(class="btn btn-primary" href="/fetch_resource" disabled) Get Protected Resource
+        
+        div(class="column")
+            h2 Log Console
+            div(class="console")
+                span(class="console-icon") !{"&gt; "}
+                if logs
+                    each line in logs
+                        | #{line} 
+                        br
+                        span(class="console-icon") !{"&gt; "}

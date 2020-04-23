@@ -14,15 +14,22 @@ html(lang='en')
     script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js")
 
     body    
-        nav(class="navbar navbar-inverse navbar-fixed-top")
-            div(class="container")
-                div(class="navbar-header")
-                    a(class="navbar-brand" href="/") OAuth in Action: 
-                        span(class="label label-success") OAuth Protected Resource
+        nav(class="navbar navbar-fixed-top")
+            a(class="navbar-brand" href="/")
+                span OAuth Protected Resource
         
-        div(class="container")
-            div(class="jumbotron")
-                div(class="alert alert-success" role="alert")
-                    | This is the shell for the <strong>OAuth Protected Resource</strong>. This provides no actual functionality.
-                
-                | To access the resource, send a <code>POST</code> request to <code>http://localhost:9002/resource</code> and include a valid OAuth token.
+        div(class="container-fluid")
+            div(class="column")
+                h2 Resource
+                div(class="info")
+                    | To access the resource, send a <code>POST</code> request to <code>http://localhost:9002/resource</code> and include a valid OAuth token.
+            
+            div(class="column")
+                h2 Log Console
+                div(class="console")
+                    span(class="console-icon") !{"&gt; "}
+                    if logs
+                        each line in logs
+                            | #{line} 
+                            br
+                            span(class="console-icon") !{"&gt; "}
