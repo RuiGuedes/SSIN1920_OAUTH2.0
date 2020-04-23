@@ -26,14 +26,22 @@ html(lang='en')
                 h2 Permissions
                 div(class="info")
                     h4 Is requesting permission to do the following:
-                    ul             
-                        each action in scope
-                            li
-                                span #{action}
-                    
                     form(method='POST' action='/permissions')
-                        a(class='btn btn-default' href= `${deny_uri}`) Deny 
-                        button.btn.btn-primary(type='submit') Allow
+                        input(type='checkbox' id='read' name="permissions1" value="Read" checked)
+                        label(for="read")
+                            span Read
+                        br
+                        input(type='checkbox' id='write' name="permissions2" value="Write" checked)
+                        label(for="write")
+                            span Write
+                        br
+                        input(type='checkbox' id='delete' name="permissions3" value="Delete" checked)
+                        label(for="delete")
+                            span Delete
+                        br                    
+                        div(class="buttons")
+                            a(class='btn btn-default' href= `${deny_uri}`) Deny 
+                            button.btn.btn-primary(type='submit') Allow
 
             div(class="column")
                 h2 Log Console

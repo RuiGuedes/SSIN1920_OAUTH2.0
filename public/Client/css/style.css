@@ -71,10 +71,10 @@ a.btn.btn-primary {
     border-color: transparent;
     color: var(--bg-dark);
     font-style: italic;
-    font-size: x-large;
+    font-size: large;
     padding: 4px 25px;
-    margin: 10px 0;
-    width: 375px;
+    margin: 6px 0;
+    width: 300px;
 }
 
 a.btn.btn-primary:hover:not(:disabled)  {

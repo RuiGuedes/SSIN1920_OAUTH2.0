@@ -62,8 +62,8 @@ body h2 {
     font-weight: bold;
 }
 
-.info form {
-    text-align: right;
+.info > form > input {
+    margin: 5px 7px;
 }
 
 .login input {
@@ -74,6 +74,10 @@ body h2 {
 
 .login {
     text-align: center;
+}
+
+.buttons {
+    text-align: right;
 }
 
 button.btn.btn-primary {
