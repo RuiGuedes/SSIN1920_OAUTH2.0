@@ -100,13 +100,17 @@ app.get('/permissions', function(req, res) {
 })
 
 app.post('/permissions', function(req, res) {
+  // Determines whether the user is authenticated or not
+  if(req.session.userID != req.session.request.state)
+    return res.redirect('/')
+
   // Generate authorization code 
   let auth_code = randomstring.generate(64)
 
   // Generate code expiration date
   let d = new Date();
   let expiration = Math.round(d.getTime() / 1000) + 600
-// TODO - Store allowed scope
+  // TODO - Store allowed scope
   storage.authCodes[req.session.request.client_id] = {"code": auth_code, 
                                               "expiration": expiration, 
                                               "redirection_uri": req.session.request.redirect_uri,
