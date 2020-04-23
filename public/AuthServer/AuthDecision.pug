@@ -27,8 +27,8 @@ html(lang='en')
                 div(class="info")
                     h4 Is requesting permission to do the following:
                     form(method='POST' action='/permissions')
-                        each action, index in scope
-                            input(type='checkbox' id=action name='permission'+index value=action checked)
+                        each action in scope
+                            input(type='checkbox' id=action name='permission' value=action checked)
                             label(for=action)
                                 span #{action.charAt(0).toUpperCase() + action.slice(1)}
                             br
