@@ -23,17 +23,6 @@ app.set('views', '../public/Client');
 
 app.use('/', express.static('../public/Client'));
 
-/**
- * Initializes variables associated with current session
- * @param {object} req Request containing session
- */
-function initSessionVariables(req) {
-  req.session.scope = req.session.scope == null ? null : req.session.scope
-  req.session.auth_code = req.session.auth_code == null ? null : req.session.auth_code
-  req.session.access_token = req.session.access_token == null ? null : req.session.access_token
-  req.session.refresh_token = req.session.refresh_token == null ? null : req.session.refresh_token
-}
-
 ///////////////
 // ENDPOINTS //
 ///////////////
@@ -69,7 +58,7 @@ app.get('/callback', function (req, res) {
                                       + "scope=" + storage.client.scope	 + "&state=" + utilities.computeHash(req.sessionID)})
 })
 
-// TODO - Complete logic
+
 app.get('/token', function (req, res) {  
   
   axios.post(storage.authServerEndpoints.tokenEndpoint, {
@@ -87,10 +76,10 @@ app.get('/token', function (req, res) {
     req.session.access_token = response.data.access_token
     req.session.refresh_token = response.data.refresh_token
     req.session.scope = response.data.scope    
-    res.redirect('callback')
+    res.redirect('/callback')
   })
   .catch(function (error) {
-    res.redirect('callback')
+    res.redirect('/callback' + "?error=" + error.data.error + "&state=" + error.data.state)
   })  
 })
 
