@@ -28,6 +28,13 @@ app.set('json spaces', 4);
 
 app.use('/', express.static('../public/AuthServer'));
 
+////////////
+// GLOBAL //
+////////////
+
+let SIZE = 64
+
+
 ///////////////
 // ENDPOINTS //
 ///////////////
@@ -69,8 +76,8 @@ app.get('/authorize', function(req, res) {
   res.redirect('/authentication')
 });
 
-app.get('/authentication', function(req, res) {    
-  if(req.session.userID == req.session.request.state)
+app.get('/authentication', function(req, res) {      
+  if(req.session.userID != null && req.session.userID.includes(req.session.request.state))
     res.redirect('/permissions')
   else
 	  res.render('Auth', {status: req.query.status == null ? "" : "Invalid credentials"})
@@ -81,7 +88,7 @@ app.post('/authentication', function(req, res) {
   let username = req.body.username
 
   if(storage.rsrcOwners[username] != null && utilities.computeHash(req.body.password) == storage.rsrcOwners[username]) {    
-    req.session.userID = req.session.request.state           
+    req.session.userID = username + "." + req.session.request.state 
     res.redirect('/permissions') 
   }
   else
@@ -90,7 +97,7 @@ app.post('/authentication', function(req, res) {
 
 app.get('/permissions', function(req, res) {
   // Determines whether the user is authenticated or not
-  if(req.session.userID != req.session.request.state)
+  if(req.session.userID == null || !req.session.userID.includes(req.session.request.state))
     res.redirect('/')
   else
     res.render('AuthDecision', {client_id: req.session.request.client_id,
@@ -101,21 +108,22 @@ app.get('/permissions', function(req, res) {
 
 app.post('/permissions', function(req, res) {
   // Determines whether the user is authenticated or not
-  if(req.session.userID != req.session.request.state)
+  if(req.session.userID == null || !req.session.userID.includes(req.session.request.state))
     return res.redirect('/')
 
   // Generate authorization code 
-  let auth_code = randomstring.generate(64)
-
+  let auth_code = randomstring.generate(SIZE)
+  
   // Generate code expiration date
   let d = new Date();
   let expiration = Math.round(d.getTime() / 1000) + 600
-  // TODO - Store allowed scope
-  storage.authCodes[req.session.request.client_id] = {"code": auth_code, 
-                                              "expiration": expiration, 
-                                              "redirection_uri": req.session.request.redirect_uri,
-                                              "used": false
-                                            }
+  
+  storage.authCodes[auth_code] = {"client_id": req.session.request.client_id, 
+                                  "expiration": expiration, 
+                                  "redirect_uri": req.session.request.redirect_uri,
+                                  "scope": req.body.permission,
+                                  "used": false
+                                }
                                             
   // Update storage data
   require('fs').writeFileSync('AuthServer/json/AuthCodes.json', JSON.stringify(storage.authCodes, null, 2));                 
@@ -125,28 +133,44 @@ app.post('/permissions', function(req, res) {
 
 app.post('/token', function(req, res) {
   let credentials = new Buffer.from(req.headers.authorization.split(" ")[1], 'base64').toString('ascii').split(":")
-  
+
   for(client of storage.clients) {
     if(client.client_id == credentials[0] && client.client_secret == credentials[1]) {
+      console.log(req.body)
+      console.log(storage.authCodes[req.body.code])
       // After succefull authentication valid token request
       if(req.body.grant_type != "authorization_code")
         return res.status(400).send({error: "unsupported_grant_type"})
 
-      if(storage.authCodes[client.client_id] != req.body.code.client_id)
-        return res.status(400).send({error: "unauthorized_client"})
-
-      if(storage.authCodes[client.client_id].code != req.body.code || storage.authCodes[client.client_id].redirect_uri != req.body.redirect_uri)
+      if(storage.authCodes[req.body.code] == null || storage.authCodes[req.body.code].redirect_uri != req.body.redirect_uri)
         return res.status(400).send({error: "invalid_grant"})
-                
+
+      if(storage.authCodes[req.body.code].client_id != req.body.client_id)
+        return res.status(400).send({error: "unauthorized_client"})
+      
       // HTTP Response Headers
       res.setHeader("Cache-Control", "no-store")
       res.setHeader("Pragma", "no-cache")
 
-      return res.send({access_token: "",
-                      token_type: "",
-                      expires_in: "",
-                      refresh_token: "",
-                      scope: ""
+      // Generate access token with expiration date
+      let token = randomstring.generate(SIZE)
+      let d = new Date();
+      let expiration = Math.round(d.getTime() / 1000) + 600
+
+      storage.accessTokens[token] = {"token_type": "bearer", 
+                                     "expires_in": expiration, 
+                                     "refresh_token": randomstring.generate(SIZE),
+                                     "scope": storage.authCodes[client.client_id].scope
+                                    }
+                                                
+      // Update storage data
+      require('fs').writeFileSync('AuthServer/json/AccessTokens.json', JSON.stringify(storage.accessTokens, null, 2));
+
+      return res.send({access_token: token,
+                      token_type: storage.accessTokens[token].token_type,
+                      expires_in: storage.accessTokens[token].expires_in,
+                      refresh_token: storage.accessTokens[token].refresh_token,
+                      scope: storage.accessTokens[token].scope
                       })
     }               
   }

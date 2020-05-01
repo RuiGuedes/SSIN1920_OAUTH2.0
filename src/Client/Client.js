@@ -84,13 +84,14 @@ app.get('/token', function (req, res) {
     }
   })
   .then(function (response){
-    console.log(response.data)
+    req.session.access_token = response.data.access_token
+    req.session.refresh_token = response.data.refresh_token
+    req.session.scope = response.data.scope    
+    res.redirect('callback')
   })
   .catch(function (error) {
-    console.log("error")
-  })
-
-  res.redirect('callback')
+    res.redirect('callback')
+  })  
 })
 
 // Initialize server

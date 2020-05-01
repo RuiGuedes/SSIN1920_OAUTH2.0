@@ -15,6 +15,7 @@ exports.authServerEndpoints = {
 exports.clients = JSON.parse(require('fs').readFileSync('AuthServer/json/Clients.json', 'utf8')).clients;
 exports.rsrcOwners = JSON.parse(require('fs').readFileSync('AuthServer/json/ResourceOwners.json', 'utf8'));
 exports.authCodes = JSON.parse(require('fs').readFileSync('AuthServer/json/AuthCodes.json', 'utf8'));
+exports.accessTokens = JSON.parse(require('fs').readFileSync('AuthServer/json/AccessTokens.json', 'utf8'));
 
 // Authorization Server Information
 let authServer = {
