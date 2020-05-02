@@ -60,13 +60,24 @@ app.get('/callback', function (req, res) {
 })
 
 app.get('/token', function (req, res) {  
-  axios.post(storage.authServerEndpoints.tokenEndpoint, {
-    grant_type: "authorization_code",
-    code: req.session.auth_code,
-    redirect_uri: storage.client.redirect_uris[0],
-    client_id: storage.client.client_id,
+  // Construct request body 
+  let body = {    
     state: utilities.computeHash(req.sessionID)
-  }, {
+  }
+
+  // Determine whether it must refresh the access token or not
+  if(req.session.refresh_token != null) {
+    body.grant_type = "refresh_token"
+    body.refresh_token = req.session.refresh_token    
+  }
+  else {
+    body.grant_type = "authorization_code"
+    body.code = req.session.auth_code
+    body.redirect_uri = storage.client.redirect_uris[0]
+  }
+
+  // Send post request to the token endpoint with confidential client authentication
+  axios.post(storage.authServerEndpoints.tokenEndpoint, body, {
     auth: {
       username: storage.client.client_id,
       password: storage.client.client_secret

@@ -91,3 +91,26 @@ exports.updateAuthCodes = function(code) {
     // Return operation status
     return status    
 }
+
+/**
+ * Validates a refresh token and if valid returns the associated information. Otherwise, returns null.
+ * @param {String} refresh_token Refresh token to be verified
+ * @returns Refresh token associated information. Null otherwise.
+ */
+exports.validateRefreshToken = function(refresh_token) {
+    // Validate refresh_token
+    if(refresh_token == null)
+        return null
+
+    // Return status
+    let status = null
+
+    for(accessToken in storage.accessTokens) {
+        if(refresh_token == storage.accessTokens[accessToken].refresh_token) {
+            let tokenInfo = storage.accessTokens[accessToken]
+            tokenInfo.accessToken = accessToken
+            status = tokenInfo
+        }
+    }
+    return status
+}

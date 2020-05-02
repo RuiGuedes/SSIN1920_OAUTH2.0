@@ -38,8 +38,6 @@ let GENERATOR_SIZE = 64
 // ENDPOINTS //
 ///////////////
 
-//utilities.updateAuthCodes("13sBsQSqwd6lobfXx6Mv6Nakdd6WWKf1lGMh2oyIdThr4J3HkQ15AvEkb8LapBVn")
-
 app.get('/', function(_, res) {
 	res.render('Index', {clients: storage.clients, authServer: storage.authServerEndpoints})
 })
@@ -145,49 +143,77 @@ app.post('/permissions', function(req, res) {
   res.redirect(req.session.request.redirect_uri + "?code=" + auth_code + "&state=" + req.session.request.state)
 })
 
+// Add refresh token expiration
+// Add client id info to the token
+// Add validation of refresh token with client id
 app.post('/token', function(req, res) {
   let credentials = new Buffer.from(req.headers.authorization.split(" ")[1], 'base64').toString('ascii').split(":")
-
-  for(client of storage.clients) {
-    if(client.client_id == credentials[0] && client.client_secret == credentials[1]) {
-      // After succefull authentication valid token request      
-      if(req.body.grant_type != "authorization_code")
+  
+  for(client of storage.clients) {    
+    // Validate client authentication
+    if(client.client_id == credentials[0] && client.client_secret == credentials[1]) {  
+      
+      // Validate request grant_type      
+      if(req.body.grant_type != "authorization_code" && req.body.grant_type != "refresh_token")
         return res.status(400).send({error: "unsupported_grant_type", state: req.body.state})
-
-      if(storage.authCodes[req.body.code] == null || storage.authCodes[req.body.code].redirect_uri != req.body.redirect_uri)
-        return res.status(400).send({error: "invalid_grant", state: req.body.state})
-
-      if(storage.authCodes[req.body.code].client_id != req.body.client_id)
-        return res.status(400).send({error: "unauthorized_client", state: req.body.state})    
-
-      // Update authorization codes
-      if(!utilities.updateAuthCodes(req.body.code))
-        return res.status(500).send({error: "server_error", state: req.body.state})
       
       // HTTP Response Headers
       res.setHeader("Cache-Control", "no-store")
       res.setHeader("Pragma", "no-cache")
 
       // Generate access token with expiration date
-      let token = randomstring.generate(GENERATOR_SIZE)
+      let tokenInfo = {}
       let d = new Date();
-      let expiration = Math.round(d.getTime() / 1000) + 600
+      let expiration = Math.round(d.getTime() / 1000) + 3600
+      let accessToken = randomstring.generate(GENERATOR_SIZE)      
 
-      storage.accessTokens[token] = {"token_type": "bearer", 
-                                     "expires_in": expiration, 
-                                     "refresh_token": randomstring.generate(GENERATOR_SIZE),
-                                     "auth_code": req.body.code,
-                                     "scope": storage.authCodes[req.body.code].scope
-                                    }
+      // Authorization server MUST validations
+      if(req.body.grant_type == "authorization_code") {
+        if(storage.authCodes[req.body.code] == null || storage.authCodes[req.body.code].redirect_uri != req.body.redirect_uri)
+          return res.status(400).send({error: "invalid_grant", state: req.body.state})
+
+        if(storage.authCodes[req.body.code].client_id != credentials[0])
+          return res.status(400).send({error: "unauthorized_client", state: req.body.state})
+
+        // Update authorization codes
+        if(!utilities.updateAuthCodes(req.body.code))
+          return res.status(500).send({error: "server_error", state: req.body.state})
+        
+        tokenInfo = {"token_type": "bearer", 
+                    "expires_in": expiration, 
+                    "refresh_token": randomstring.generate(GENERATOR_SIZE),
+                    "auth_code": req.body.code,
+                    "scope": storage.authCodes[req.body.code].scope
+                  }
+      }
+      else {         
+        // Retrieve information associated with the refresh_token
+        let oldAccessTokenInfo = utilities.validateRefreshToken(req.body.refresh_token) 
+
+        // Invalid refresh_token
+        if(oldAccessTokenInfo == null)
+          return res.status(400).send({error: "invalid_refresh_token", state: req.body.state})
+        
+        // Delete previous token
+        delete storage.accessTokens[oldAccessTokenInfo.accessToken]
+
+        tokenInfo = {"token_type": "bearer", 
+                    "expires_in": expiration, 
+                    "refresh_token": randomstring.generate(GENERATOR_SIZE),
+                    "auth_code": oldAccessTokenInfo.auth_code,
+                    "scope": oldAccessTokenInfo.scope
+                  }
+      }            
                                                 
       // Update storage data
+      storage.accessTokens[accessToken] = tokenInfo
       storage.updateAccessTokens()
 
-      return res.send({access_token: token,
-                      token_type: storage.accessTokens[token].token_type,
-                      expires_in: storage.accessTokens[token].expires_in,
-                      refresh_token: storage.accessTokens[token].refresh_token,
-                      scope: storage.accessTokens[token].scope,
+      return res.send({access_token: accessToken,
+                      token_type: storage.accessTokens[accessToken].token_type,
+                      expires_in: storage.accessTokens[accessToken].expires_in,
+                      refresh_token: storage.accessTokens[accessToken].refresh_token,
+                      scope: storage.accessTokens[accessToken].scope,
                       state: req.body.state
                       })
     }               
