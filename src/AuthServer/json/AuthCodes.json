@@ -1,55 +1,13 @@
 {
-  "ncVUupktYMquV7py2e3o7ULC8HP7V7scOgYezZogQtop4i3vEjghe35S9wBRwSYo": {
+  "AHvIXPR4aSPn1PbostNe9OHBgKuYaUCEGvElPK5IsCx59R6ZgtlZ1aNqBaLOdquV": {
     "client_id": "oauth-client-1",
-    "expiration": 1588342193,
+    "expiration": 1588437124,
     "redirect_uri": "http://localhost:9000/callback",
     "scope": [
       "read",
       "write",
       "delete"
     ],
-    "used": false
-  },
-  "MBU4RWFP8KmJ1zvIOyci1wAeYOFGbTRBY9x03iqCjM8T9pNvAwoIFR4Z6mdG5XdB": {
-    "client_id": "oauth-client-1",
-    "expiration": 1588342204,
-    "redirect_uri": "http://localhost:9000/callback",
-    "scope": [
-      "read",
-      "write"
-    ],
-    "used": false
-  },
-  "Mrgu2OYrupdvwF6mflMrwXCOO8nBLhxfC61I7BHqT4fWrEkRSLRquvTx4kz1wS6R": {
-    "client_id": "oauth-client-1",
-    "expiration": 1588342251,
-    "redirect_uri": "http://localhost:9000/callback",
-    "scope": [
-      "read",
-      "write",
-      "delete"
-    ],
-    "used": false
-  },
-  "578sDBMb1baugammx7MhPF25CTsDPMk6vtRRXLvLicOD3vQg2zMif5u1NlFwSvWi": {
-    "client_id": "oauth-client-1",
-    "expiration": 1588342288,
-    "redirect_uri": "http://localhost:9000/callback",
-    "scope": [
-      "read",
-      "delete"
-    ],
-    "used": false
-  },
-  "wrSyjnM0AGEqVZU8izhrGzvJc0PevU53u1vSBYHjcT5kprVoKGu4cj37XBDiddsj": {
-    "client_id": "oauth-client-1",
-    "expiration": 1588342294,
-    "redirect_uri": "http://localhost:9000/callback",
-    "scope": [
-      "read",
-      "write",
-      "delete"
-    ],
-    "used": false
+    "used": true
   }
 }

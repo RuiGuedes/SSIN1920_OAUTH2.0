@@ -50,7 +50,8 @@ app.get('/callback', function (req, res) {
   res.render('Index', { auth_code: req.session.auth_code,
                         access_token: req.session.access_token, 
                         refresh_token: req.session.refresh_token, 
-                        scope: req.session.scope, 
+                        scope: req.session.scope,
+                        error: req.query.error,
                         auth_endpoint: storage.authServerEndpoints.authorizationEndpoint + "?"
                                       + "response_type=code" + "&"
                                       + "client_id=" + storage.client.client_id + "&"
@@ -58,14 +59,13 @@ app.get('/callback', function (req, res) {
                                       + "scope=" + storage.client.scope	 + "&state=" + utilities.computeHash(req.sessionID)})
 })
 
-
 app.get('/token', function (req, res) {  
-  
   axios.post(storage.authServerEndpoints.tokenEndpoint, {
     grant_type: "authorization_code",
     code: req.session.auth_code,
     redirect_uri: storage.client.redirect_uris[0],
-    client_id: storage.client.client_id
+    client_id: storage.client.client_id,
+    state: utilities.computeHash(req.sessionID)
   }, {
     auth: {
       username: storage.client.client_id,
@@ -76,10 +76,11 @@ app.get('/token', function (req, res) {
     req.session.access_token = response.data.access_token
     req.session.refresh_token = response.data.refresh_token
     req.session.scope = response.data.scope    
-    res.redirect('/callback')
+    res.redirect('/callback?state=' + response.data.state)
   })
-  .catch(function (error) {
-    res.redirect('/callback' + "?error=" + error.data.error + "&state=" + error.data.state)
+  .catch(function (error) {    
+    req.session.auth_code = req.session.access_token = req.session.refresh_token = req.session.scope = null
+    res.redirect('/callback?error=' + error.response.data.error + "&state=" + error.response.data.state)
   })  
 })
 

@@ -38,6 +38,8 @@ let GENERATOR_SIZE = 64
 // ENDPOINTS //
 ///////////////
 
+//utilities.updateAuthCodes("13sBsQSqwd6lobfXx6Mv6Nakdd6WWKf1lGMh2oyIdThr4J3HkQ15AvEkb8LapBVn")
+
 app.get('/', function(_, res) {
 	res.render('Index', {clients: storage.clients, authServer: storage.authServerEndpoints})
 })
@@ -138,33 +140,29 @@ app.post('/permissions', function(req, res) {
                                 }
                                             
   // Update storage data
-  require('fs').writeFileSync('AuthServer/json/AuthCodes.json', JSON.stringify(storage.authCodes, null, 2));                 
+  storage.updateAuthCodes()
   
   res.redirect(req.session.request.redirect_uri + "?code=" + auth_code + "&state=" + req.session.request.state)
 })
 
 app.post('/token', function(req, res) {
-  ////////////////////////////////////////////////////
-  // TODO - Clean auth_codes expired or with "used" equal to true and for each one of this codes it revokes the issued tokens
-  ////////////////////////////////////////////////////
-  
   let credentials = new Buffer.from(req.headers.authorization.split(" ")[1], 'base64').toString('ascii').split(":")
 
   for(client of storage.clients) {
     if(client.client_id == credentials[0] && client.client_secret == credentials[1]) {
-      // After succefull authentication valid token request
+      // After succefull authentication valid token request      
       if(req.body.grant_type != "authorization_code")
-        return res.status(400).send({error: "unsupported_grant_type", state: req.session.request.state})
+        return res.status(400).send({error: "unsupported_grant_type", state: req.body.state})
 
       if(storage.authCodes[req.body.code] == null || storage.authCodes[req.body.code].redirect_uri != req.body.redirect_uri)
-        return res.status(400).send({error: "invalid_grant", state: req.session.request.state})
+        return res.status(400).send({error: "invalid_grant", state: req.body.state})
 
       if(storage.authCodes[req.body.code].client_id != req.body.client_id)
-        return res.status(400).send({error: "unauthorized_client", state: req.session.request.state})
-      
-      ////////////////////////////////////////////////////
-      // TODO - Update "used" field to be equal to true
-      ////////////////////////////////////////////////////
+        return res.status(400).send({error: "unauthorized_client", state: req.body.state})    
+
+      // Update authorization codes
+      if(!utilities.updateAuthCodes(req.body.code))
+        return res.status(500).send({error: "server_error", state: req.body.state})
       
       // HTTP Response Headers
       res.setHeader("Cache-Control", "no-store")
@@ -178,22 +176,24 @@ app.post('/token', function(req, res) {
       storage.accessTokens[token] = {"token_type": "bearer", 
                                      "expires_in": expiration, 
                                      "refresh_token": randomstring.generate(GENERATOR_SIZE),
+                                     "auth_code": req.body.code,
                                      "scope": storage.authCodes[req.body.code].scope
                                     }
                                                 
       // Update storage data
-      require('fs').writeFileSync('AuthServer/json/AccessTokens.json', JSON.stringify(storage.accessTokens, null, 2));
+      storage.updateAccessTokens()
 
       return res.send({access_token: token,
                       token_type: storage.accessTokens[token].token_type,
                       expires_in: storage.accessTokens[token].expires_in,
                       refresh_token: storage.accessTokens[token].refresh_token,
-                      scope: storage.accessTokens[token].scope
+                      scope: storage.accessTokens[token].scope,
+                      state: req.body.state
                       })
     }               
   }
 
-  res.status(400).send({error: "invalid_client"})
+  res.status(400).send({error: "invalid_client", state: req.body.state})
 })
 
 // Initialize server
