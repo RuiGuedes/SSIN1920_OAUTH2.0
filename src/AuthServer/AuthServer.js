@@ -38,6 +38,9 @@ let GENERATOR_SIZE = 64
 // ENDPOINTS //
 ///////////////
 
+/**
+ * Default endpoint
+ */
 app.get('/', function(_, res) {
 	res.render('Index', {clients: storage.clients, authServer: storage.authServerEndpoints})
 })
@@ -130,6 +133,9 @@ app.post('/permissions', function(req, res) {
   let d = new Date();
   let expiration = Math.round(d.getTime() / 1000) + 600
   
+  // Revoke previous authorization codes and associated tokens
+  utilities.revokeAuthCode(req.session.request.client_id)
+
   storage.authCodes[auth_code] = {"client_id": req.session.request.client_id, 
                                   "expiration": expiration, 
                                   "redirect_uri": req.session.request.redirect_uri,

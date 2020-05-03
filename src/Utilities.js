@@ -93,6 +93,28 @@ exports.updateAuthCodes = function(code) {
 }
 
 /**
+ * Revokes old authorization code(s) issued to a specific client.
+ * Also revoke access tokens issued based on a certain authorization
+ * code issued to that same client.
+ * @param {String} client_id Client identifier
+ */
+exports.revokeAuthCode = function(client_id) {
+    for(authCode in storage.authCodes) {
+        if(client_id == storage.authCodes[authCode].client_id) {
+            for(accessToken in storage.accessTokens) {        
+                if(authCode == storage.accessTokens[accessToken].auth_code)
+                    delete storage.accessTokens[accessToken]        
+            }
+            delete storage.authCodes[authCode]
+        }                    
+    }
+
+    // Update storage
+    storage.updateAuthCodes()
+    storage.updateAccessTokens()
+}
+
+/**
  * Validates a refresh token and if valid returns the associated information. Otherwise, returns null.
  * @param {String} refresh_token Refresh token to be verified
  * @returns Refresh token associated information. Null otherwise.

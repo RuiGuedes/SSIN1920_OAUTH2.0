@@ -27,6 +27,9 @@ app.use('/', express.static('../public/Client'));
 // ENDPOINTS //
 ///////////////
 
+/**
+ * Default endpoint
+ */
 app.get('/', function (req, res) {  
   res.render('Index', { auth_code: req.session.auth_code,
                         access_token: req.session.access_token, 
@@ -39,13 +42,22 @@ app.get('/', function (req, res) {
                                       + "scope=" + storage.client.scope	 + "&state=" + utilities.computeHash(req.sessionID)})
 })
 
+/**
+ * Callback endpoint which corresponds to the client redirection uri that 
+ * is passed in every request to the authorization server.
+ */
 app.get('/callback', function (req, res) {
   // Validate redirection through validation of the state 
   if(req.query.state != utilities.computeHash(req.sessionID))
     return res.redirect('/')
 
   // Update authorization code
-  req.session.auth_code = req.query.code == null ? req.session.auth_code : req.query.code
+  if(req.query.code != null) {
+    req.session.auth_code = req.query.code
+    req.session.access_token = req.session.refresh_token = req.session.scope = null
+  }
+  else 
+    req.session.auth_code = req.session.auth_code
 
   res.render('Index', { auth_code: req.session.auth_code,
                         access_token: req.session.access_token, 
@@ -59,6 +71,9 @@ app.get('/callback', function (req, res) {
                                       + "scope=" + storage.client.scope	 + "&state=" + utilities.computeHash(req.sessionID)})
 })
 
+/**
+ * Endpoint used to request a new access token
+ */
 app.get('/token', function (req, res) {  
   // Construct request body 
   let body = {    
