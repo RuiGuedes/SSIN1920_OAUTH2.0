@@ -61,10 +61,10 @@ exports.updateAuthCodes = function(code) {
 
     // Get current time
     let d = new Date();
-    let expiration = Math.round(d.getTime() / 1000)
+    let currTime = Math.round(d.getTime() / 1000)
 
     for(authCode in storage.authCodes) {
-        if(expiration > storage.authCodes[authCode].expiration || (storage.authCodes[authCode].used && authCode != code))
+        if(currTime > storage.authCodes[authCode].expiration || (storage.authCodes[authCode].used && authCode != code))
             delete storage.authCodes[authCode]        
     }
     
@@ -97,16 +97,26 @@ exports.updateAuthCodes = function(code) {
  * @param {String} refresh_token Refresh token to be verified
  * @returns Refresh token associated information. Null otherwise.
  */
-exports.validateRefreshToken = function(refresh_token) {
+exports.validateRefreshToken = function(refresh_token, client_id) {
     // Validate refresh_token
     if(refresh_token == null)
         return null
 
+    // Get current time
+    let d = new Date();
+    let currTime = Math.round(d.getTime() / 1000)
+
+    // Clean expired access/refresh tokens
+    for(accessToken in storage.accessTokens) {        
+        if(currTime > storage.accessTokens[accessToken].expires_in || currTime > storage.accessTokens[accessToken].refresh_token_expiration)
+            delete storage.accessTokens[accessToken]        
+    }
+
     // Return status
     let status = null
-
+    
     for(accessToken in storage.accessTokens) {
-        if(refresh_token == storage.accessTokens[accessToken].refresh_token) {
+        if(refresh_token == storage.accessTokens[accessToken].refresh_token && client_id == storage.accessTokens[accessToken].client_id) {
             let tokenInfo = storage.accessTokens[accessToken]
             tokenInfo.accessToken = accessToken
             status = tokenInfo

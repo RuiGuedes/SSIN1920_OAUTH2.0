@@ -143,9 +143,13 @@ app.post('/permissions', function(req, res) {
   res.redirect(req.session.request.redirect_uri + "?code=" + auth_code + "&state=" + req.session.request.state)
 })
 
-// Add refresh token expiration
-// Add client id info to the token
-// Add validation of refresh token with client id
+/**
+ * Token endpoint responsible for generating a new access token. The access
+ * token genaration can be done through with the authorization code or with
+ * the refresh token associated. For both methods the respective request must
+ * be properly validated. The validation is made according the specification
+ * in RFC 6749.
+ */
 app.post('/token', function(req, res) {
   let credentials = new Buffer.from(req.headers.authorization.split(" ")[1], 'base64').toString('ascii').split(":")
   
@@ -161,10 +165,10 @@ app.post('/token', function(req, res) {
       res.setHeader("Cache-Control", "no-store")
       res.setHeader("Pragma", "no-cache")
 
-      // Generate access token with expiration date
+      // Generate access token and expiration time
       let tokenInfo = {}
       let d = new Date();
-      let expiration = Math.round(d.getTime() / 1000) + 3600
+      let expiration = Math.round(d.getTime() / 1000)
       let accessToken = randomstring.generate(GENERATOR_SIZE)      
 
       // Authorization server MUST validations
@@ -180,15 +184,17 @@ app.post('/token', function(req, res) {
           return res.status(500).send({error: "server_error", state: req.body.state})
         
         tokenInfo = {"token_type": "bearer", 
-                    "expires_in": expiration, 
+                    "expires_in": expiration + 3600, 
                     "refresh_token": randomstring.generate(GENERATOR_SIZE),
+                    "refresh_token_expiration": expiration + 3600*24,
                     "auth_code": req.body.code,
+                    "client_id": client.client_id,
                     "scope": storage.authCodes[req.body.code].scope
                   }
       }
       else {         
         // Retrieve information associated with the refresh_token
-        let oldAccessTokenInfo = utilities.validateRefreshToken(req.body.refresh_token) 
+        let oldAccessTokenInfo = utilities.validateRefreshToken(req.body.refresh_token, client.client_id) 
 
         // Invalid refresh_token
         if(oldAccessTokenInfo == null)
@@ -198,9 +204,11 @@ app.post('/token', function(req, res) {
         delete storage.accessTokens[oldAccessTokenInfo.accessToken]
 
         tokenInfo = {"token_type": "bearer", 
-                    "expires_in": expiration, 
+                    "expires_in": expiration + 3600, 
                     "refresh_token": randomstring.generate(GENERATOR_SIZE),
+                    "refresh_token_expiration": expiration + 3600*24,
                     "auth_code": oldAccessTokenInfo.auth_code,
+                    "client_id": client.client_id,
                     "scope": oldAccessTokenInfo.scope
                   }
       }            
@@ -211,7 +219,7 @@ app.post('/token', function(req, res) {
 
       return res.send({access_token: accessToken,
                       token_type: storage.accessTokens[accessToken].token_type,
-                      expires_in: storage.accessTokens[accessToken].expires_in,
+                      expires_in: 3600,
                       refresh_token: storage.accessTokens[accessToken].refresh_token,
                       scope: storage.accessTokens[accessToken].scope,
                       state: req.body.state
