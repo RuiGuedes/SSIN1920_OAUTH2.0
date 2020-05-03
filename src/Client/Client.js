@@ -115,3 +115,11 @@ let server = app.listen(9000, 'localhost', function () {
   console.log('OAuth Client is listening at http://localhost:%s', server.address().port);
 });
  
+// TODO 
+// Add authentiction of client with client_id and client_secret hashed to not be exposed
+// Add frontend functionalities
+// Add introspection endpoint 
+//   - Must do all verifications
+//   - Prevent token fishing with client authentication
+//   - Implement caching to boost performance but still be robust (exp)
+//   - 
