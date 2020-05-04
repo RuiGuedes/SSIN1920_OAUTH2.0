@@ -63,8 +63,18 @@ html(lang='en')
                         script
                             include script.js
                         br
-                        each action in scope
-                            button.btn.btn-primary(type='submit', value="#{action}")
+                        
+                        if (Array.isArray(scope))
+                            - length = scope.length
+                        else
+                            - length = 1 
+                        - var n = 0
+                        while n < length
+                            if (length == 1)
+                                - action = scope
+                            else
+                                - action = scope[n]
+                            button.btn.btn-primary(type='submit', value=`${action}`)
                                 case action
                                     when "read"
                                         | Search
@@ -72,6 +82,7 @@ html(lang='en')
                                         | Insert
                                     when "delete"
                                         | Delete
+                            - n++
 
         div(class="column")
             h2 Log Console
