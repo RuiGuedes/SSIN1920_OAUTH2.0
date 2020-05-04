@@ -12,6 +12,7 @@ html(lang='en')
 
     script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js")
     script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js")
+
   body
     nav(class="navbar navbar-fixed-top")
         a(class="navbar-brand" href="/") 
@@ -52,9 +53,26 @@ html(lang='en')
                         a(class='btn btn-primary' disabled) Get OAuth Token
                     else 
                         a(class='btn btn-primary' href= "http://localhost:9000/token") Get OAuth Token
-                    br
-                    a(class="btn btn-primary" href="/fetch_resource" disabled) Get Protected Resource
-        
+
+            if (typeof(scope) != 'undefined' || scope != null)
+                h2 Protected Resources
+                div(class="info")
+                    div(class="buttons")
+                        label(for='word', hidden="true") Word:
+                        input#word.form-control(type='text', name='word', placeholder="Word", required="true")
+                        script
+                            include script.js
+                        br
+                        each action in scope
+                            button.btn.btn-primary(type='submit', value="#{action}")
+                                case action
+                                    when "read"
+                                        | Search
+                                    when "write"
+                                        | Insert
+                                    when "delete"
+                                        | Delete
+
         div(class="column")
             h2 Log Console
             div(class="console")

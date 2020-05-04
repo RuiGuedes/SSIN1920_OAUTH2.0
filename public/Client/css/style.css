@@ -21,6 +21,7 @@ html body {
 
 .navbar.navbar-fixed-top {
     border-bottom: 2px solid var(--brand-color);
+    background-color: var(--bg-dark);
 }
 
 .navbar-brand:hover {
@@ -64,6 +65,27 @@ body h2 {
 
 .buttons {
     text-align: center;
+}
+
+input.form-control {
+    display: inline-block;
+    width: 300px;
+}
+
+button.btn.btn-primary {
+    background-color: var(--brand-color);
+    border-color: transparent;
+    color: var(--bg-dark);
+    font-style: italic;
+    font-size: large;
+    padding: 4px 25px;
+    margin: 15px 8px 0 8px;
+}
+
+button.btn.btn-primary:hover {
+    background-color: var(--bg-dark);
+    border-color: var(--light-grey);
+    color: var(--brand-color);
 }
 
 a.btn.btn-primary {

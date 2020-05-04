@@ -21,6 +21,7 @@ html body {
 
 .navbar.navbar-fixed-top {
     border-bottom: 2px solid var(--brand-color);
+    background-color: var(--bg-dark);
 }
 
 .navbar .navbar-brand {
