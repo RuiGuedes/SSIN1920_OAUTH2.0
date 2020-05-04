@@ -54,7 +54,7 @@ html(lang='en')
                     else 
                         a(class='btn btn-primary' href= "http://localhost:9000/token") Get OAuth Token
 
-            if (typeof(scope) != 'undefined' || scope != null)
+            if !(typeof(scope) == 'undefined' || scope == null)
                 h2 Protected Resources
                 div(class="info")
                     div(class="buttons")
