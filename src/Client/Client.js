@@ -117,7 +117,7 @@ let server = app.listen(9000, 'localhost', function () {
  
 // TODO 
 // Add authentiction of client with client_id and client_secret hashed to not be exposed
-// Add frontend functionalities
+// Duplicated endpoints refactor when adding the introspection endpoint
 // Add introspection endpoint 
 //   - Must do all verifications
 //   - Prevent token fishing with client authentication
