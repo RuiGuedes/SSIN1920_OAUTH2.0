@@ -140,7 +140,7 @@ app.get('/resource', function(req, res) {
 
 // Initialize server
 let server = app.listen(9000, 'localhost', function () {
-  console.log('OAuth Client is listening at http://localhost:%s', server.address().port);
+  console.log('OAuth Client is listening at http://localhost:%s', server.address().port)
 });
  
 // TODO 
