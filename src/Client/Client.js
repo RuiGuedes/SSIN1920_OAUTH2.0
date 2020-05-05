@@ -3,6 +3,7 @@ let express = require("express");
 let session = require("express-session")
 let utilities = require("../Utilities.js")
 let storage = require("../Storage.js")
+let bodyParser = require('body-parser')
 
 ////////////////
 // APP CONFIG //
@@ -16,6 +17,9 @@ app.use(session({
   resave: 'false',
   saveUninitialized: 'false'
 }))
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.engine('pug', require('pug').__express)
 app.set('view engine', 'pug');
@@ -110,8 +114,8 @@ app.get('/token', function (req, res) {
   })  
 })
 
-app.post('/test', function(req, res) {
-  console.log(req.body)
+app.get('/test', function(req, res) {
+  console.log(req.query)
 })
 
 // Initialize server

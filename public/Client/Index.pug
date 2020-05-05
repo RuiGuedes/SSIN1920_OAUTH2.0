@@ -58,27 +58,26 @@ html(lang='en')
                 h2 Access Protected Resource
                 div(class="info")                    
                         div(class="buttons")
-                            form(method='POST' action='/test')
-                                label(for='word', hidden="true") Word:
-                                input#word.form-control(type='text', name='word', placeholder="Word", required="true")
-                                script
-                                    include script.js
-                                br
-                                
-                                if (Array.isArray(scope))
-                                    - length = scope.length
-                                else
-                                    - length = 1 
+                            form(method='GET' action='/test')
+                                div.form-group
+                                    label(for='word', hidden="true") Word:
+                                    input#word.form-control(type='text', name='word', placeholder="Word", required="true", value="success")
+                                    script
+                                        include script.js
+
+                                - (Array.isArray(scope))? length = scope.length : length = 1 
                                 - var n = 0
                                 while n < length
-                                    if (length == 1)
-                                        - action = scope
-                                    else
-                                        - action = scope[n]
-                                    input(type="submit", name="submit", value=`${action}`)                                
-                                        
+                                    - (length == 1)? action = scope : action = scope[n]
+                                    case action
+                                        when "read"
+                                            - text = "Search"
+                                        when "write"
+                                            - text = "Insert"
+                                        when "delete"
+                                            - text = "Delete"
+                                    input.btn.btn-primary(type="submit", name="submit", value=`${text}`)
                                     - n++
-                                button.btn.btn-primary(type='submit') Allow
 
         div(class="column")
             h2 Log Console
