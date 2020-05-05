@@ -140,6 +140,7 @@ app.post('/permissions', function(req, res) {
                                   "expiration": expiration, 
                                   "redirect_uri": req.session.request.redirect_uri,
                                   "scope": req.body.permission,
+                                  "username": req.session.userID.split('.')[0],
                                   "used": false
                                 }
                                             
@@ -161,7 +162,7 @@ app.post('/token', function(req, res) {
   
   for(client of storage.clients) {    
     // Validate client authentication
-    if(client.client_id == credentials[0] && client.client_secret == credentials[1]) {  
+    if(utilities.computeHash(client.client_id) == credentials[0] && utilities.computeHash(client.client_secret) == credentials[1]) {  
       
       // Validate request grant_type      
       if(req.body.grant_type != "authorization_code" && req.body.grant_type != "refresh_token")
@@ -174,7 +175,7 @@ app.post('/token', function(req, res) {
       // Generate access token and expiration time
       let tokenInfo = {}
       let d = new Date();
-      let expiration = Math.round(d.getTime() / 1000)
+      let currTime = Math.round(d.getTime() / 1000)
       let accessToken = randomstring.generate(GENERATOR_SIZE)      
 
       // Authorization server MUST validations
@@ -182,7 +183,7 @@ app.post('/token', function(req, res) {
         if(storage.authCodes[req.body.code] == null || storage.authCodes[req.body.code].redirect_uri != req.body.redirect_uri)
           return res.status(400).send({error: "invalid_grant", state: req.body.state})
 
-        if(storage.authCodes[req.body.code].client_id != credentials[0])
+        if(storage.authCodes[req.body.code].client_id != client.client_id)
           return res.status(400).send({error: "unauthorized_client", state: req.body.state})
 
         // Update authorization codes
@@ -190,11 +191,12 @@ app.post('/token', function(req, res) {
           return res.status(500).send({error: "server_error", state: req.body.state})
         
         tokenInfo = {"token_type": "bearer", 
-                    "expires_in": expiration + 3600, 
+                    "expires_in": currTime + 3600, 
                     "refresh_token": randomstring.generate(GENERATOR_SIZE),
-                    "refresh_token_expiration": expiration + 3600*24,
+                    "refresh_token_expiration": currTime + 3600*24,
                     "auth_code": req.body.code,
                     "client_id": client.client_id,
+                    "username": storage.authCodes[req.body.code].username,
                     "scope": storage.authCodes[req.body.code].scope
                   }
       }
@@ -210,11 +212,12 @@ app.post('/token', function(req, res) {
         delete storage.accessTokens[oldAccessTokenInfo.accessToken]
 
         tokenInfo = {"token_type": "bearer", 
-                    "expires_in": expiration + 3600, 
+                    "expires_in": currTime + 3600, 
                     "refresh_token": randomstring.generate(GENERATOR_SIZE),
-                    "refresh_token_expiration": expiration + 3600*24,
+                    "refresh_token_expiration": currTime + 3600*24,
                     "auth_code": oldAccessTokenInfo.auth_code,
                     "client_id": client.client_id,
+                    "username": oldAccessTokenInfo.username,
                     "scope": oldAccessTokenInfo.scope
                   }
       }            
@@ -236,8 +239,39 @@ app.post('/token', function(req, res) {
   res.status(400).send({error: "invalid_client", state: req.body.state})
 })
 
+/**
+ * Introspection endpoint used to retrieve information about a specific token.
+ * This includes client authentication to prevent token scanning attacks, also
+ * known as token fishing, and is implemented according the specification in 
+ * RFC 7662.
+ */
 app.post('/introspect', function(req, res) {
-  
+  let credentials = new Buffer.from(req.headers.authorization.split(" ")[1], 'base64').toString('ascii').split(":")
+
+  // Client authentication to prevent token scanning attacks
+  for(client of storage.clients) {    
+    if(utilities.computeHash(client.client_id) == credentials[0] && utilities.computeHash(client.client_secret) == credentials[1]) {  
+      // Token variables
+      let tokenInfo = storage.accessTokens[req.body.token]
+      let d = new Date();
+      let currTime = Math.round(d.getTime() / 1000)
+
+      // Invalid/Revoked/Expired token
+      if(tokenInfo == null || currTime > tokenInfo.expires_in)      
+        return res.send({active: false})
+      
+      // Return token information
+      return res.send({active: currTime < tokenInfo.expires_in,
+                       scope: tokenInfo.scope,
+                       client_id: tokenInfo.client_id,
+                       username: tokenInfo.username,
+                       token_type: tokenInfo.token_type,
+                       exp: tokenInfo.expires_in
+                      })
+    }   
+  }
+
+  res.status(401).send({error: "Unauthorized"})
 })
 
 // Initialize server

@@ -10,7 +10,7 @@ exports.authServerEndpoints = {
 
 // Authorization Server Endpoints
 exports.protectedResourceEndpoints = {
-  accessEndpoint: 'http://localhost:9002/resource'  
+  resourceEndpoint: 'http://localhost:9002/resource'  
 }
 
 //////////////////////////////////////
@@ -34,5 +34,3 @@ exports.updateAccessTokens = function() {
 // Protected Resource Information //
 ////////////////////////////////////
 
-// Client Information
-exports.protectedResource = JSON.parse(require('fs').readFileSync('ProtectedResource/json/Data.json', 'utf8'))

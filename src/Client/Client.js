@@ -98,8 +98,8 @@ app.get('/token', function (req, res) {
   // Send POST request to the token endpoint with confidential client authentication
   axios.post(storage.authServerEndpoints.tokenEndpoint, body, {
     auth: {
-      username: storage.client.client_id,
-      password: storage.client.client_secret
+      username: utilities.computeHash(storage.client.client_id),
+      password: utilities.computeHash(storage.client.client_secret)
     }
   })
   .then(function (response){
@@ -122,7 +122,7 @@ app.get('/resource', function(req, res) {
   
   // Construct request body 
   let body = {    
-    token: "drNV3x3vR6SazqsmVQO3pf8piVnwlzxUbuCGK95D4zwMDgQGcM283grCvPjvYiGD", // req.session.access_token,
+    token: req.session.access_token,
     client_id: storage.client.client_id,
     action: {
       word: req.query.word,
@@ -132,7 +132,13 @@ app.get('/resource', function(req, res) {
   }
   
   // Send POST request to the protected resource
-  axios.post(storage.protectedResourceEndpoints.accessEndpoint, body).then(function (response){
+  axios.post(storage.protectedResourceEndpoints.resourceEndpoint, body,  {
+    auth: {
+      username: utilities.computeHash(storage.client.client_id),
+      password: utilities.computeHash(storage.client.client_secret)
+    }
+  })
+  .then(function (response){
       //console.log(response.data)
       res.redirect('/callback?state=' + response.data.state)
   })
@@ -147,10 +153,7 @@ let server = app.listen(9000, 'localhost', function () {
 });
  
 // TODO 
-// Add authentiction between servers with hashing the password and ID
-// Duplicated endpoints refactor when adding the introspection endpoint
 // Add introspection endpoint 
 //   - Must do all verifications
-//   - Prevent token fishing with client authentication
 //   - Implement caching to boost performance but still be robust (exp)
 //   - 

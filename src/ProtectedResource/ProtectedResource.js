@@ -58,18 +58,21 @@ app.get('/', function(req, res) {
  * is executed successfully, otherwise it returns an error.
  */
 app.post('/resource', function(req, res) {
+  let credentials = new Buffer.from(req.headers.authorization.split(" ")[1], 'base64').toString('ascii').split(":")
+
   axios.post(storage.authServerEndpoints.introspectionEndpoint, {token: req.body.token}, {
     auth: {
-      username: storage.protectedResource.protected_rsrc_id,
-      password: storage.protectedResource.protected_rsrc_secret
+      username: credentials[0],
+      password: credentials[1]
     }
   })
   .then(function (response){
+    console.log(response.data)
     // Analyse response bla bla bla  
     //res.redirect(req.body.redirect_uri + '?state=' + response.data.state)
   })
-  .catch(function (error) {        
-    //res.redirect('/callback?error=' + error.response.data.error + "&state=" + error.response.data.state)
+  .catch(function (error) {
+    return res.status(400).send({error: error.response.data.error, state: req.body.state})    
   })    
 })
 

@@ -1,13 +1,14 @@
 {
-  "VRzXUo3VaW3jUdm0o5fTngL9q8VQIIIfhzpci1lVHHqnAe4taHs5urpoTEscKkzM": {
+  "mrKwJH5e77NQCHXCTCkjkdt34mCvMWrZO8iiK5apflIBRbgMK20nWdiEvdKjp8N2": {
     "client_id": "oauth-client-1",
-    "expiration": 1588693161,
+    "expiration": 1588701667,
     "redirect_uri": "http://localhost:9000/callback",
     "scope": [
       "read",
       "write",
       "delete"
     ],
+    "username": "JohnDoe",
     "used": true
   }
 }
