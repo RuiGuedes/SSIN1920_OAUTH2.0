@@ -60,7 +60,8 @@ app.get('/', function(req, res) {
 app.post('/resource', function(req, res) {
   let credentials = new Buffer.from(req.headers.authorization.split(" ")[1], 'base64').toString('ascii').split(":")
 
-  // TODO - Cleanup cache
+  // Cleanup cache
+  utilities.cleanupTokensCache()
 
   // Determine whether the pretended token is cached or not
   if(storage.tokensCache[req.body.token] == null) {

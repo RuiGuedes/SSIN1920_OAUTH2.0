@@ -163,3 +163,22 @@ exports.validateRefreshToken = function(refresh_token, client_id) {
     }
     return status
 }
+
+/**
+ * Cleans up the token cache in the protected resource server to prevent 
+ * caching vulnerabilities while maintaining the performance.
+ */
+exports.cleanupTokensCache = function() {
+    // Get current time
+    let d = new Date();
+    let currTime = Math.round(d.getTime() / 1000)
+
+    // Clean expired access/refresh tokens
+    for(token in storage.tokensCache) {        
+        if(currTime > storage.tokensCache[token].exp)
+            delete storage.tokensCache[token]        
+    }
+
+    // Update storage
+    storage.updateTokensCache()
+}

@@ -155,7 +155,6 @@ let server = app.listen(9000, 'localhost', function () {
 });
  
 // TODO 
-// Add introspection endpoint 
+// Introspection endpoint 
 //   - Must do all verifications
-//   - Implement caching to boost performance but still be robust (exp)
-//   - 
+//   - Limiting information ??
