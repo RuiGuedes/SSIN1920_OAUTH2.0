@@ -1,4 +1,4 @@
-let express = require("express");
+let express = require("express")
 let storage = require("../Storage.js")
 let bodyParser = require('body-parser')
 let session = require("express-session")
@@ -9,7 +9,7 @@ let utilities = require("../Utilities.js")
 // APP CONFIG //
 ////////////////
 
-let app = express();
+let app = express()
 
 app.use(session({
   secret: 'oauth-auth-secret',
@@ -18,15 +18,15 @@ app.use(session({
   saveUninitialized: 'false'
 }))
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
 
 app.engine('pug', require('pug').__express)
-app.set('view engine', 'pug');
-app.set('views', '../public/AuthServer');
-app.set('json spaces', 4);
+app.set('view engine', 'pug')
+app.set('views', '../public/AuthServer')
+app.set('json spaces', 4)
 
-app.use('/', express.static('../public/AuthServer'));
+app.use('/', express.static('../public/AuthServer'))
 
 ////////////
 // GLOBAL //

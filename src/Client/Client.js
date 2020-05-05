@@ -1,5 +1,5 @@
-let axios = require('axios');
-let express = require("express");
+let axios = require('axios')
+let express = require("express")
 let session = require("express-session")
 let utilities = require("../Utilities.js")
 let storage = require("../Storage.js")
@@ -9,7 +9,7 @@ let bodyParser = require('body-parser')
 // APP CONFIG //
 ////////////////
 
-let app = express();
+let app = express()
 
 app.use(session({
   secret: 'oauth-client-secret',
@@ -18,14 +18,14 @@ app.use(session({
   saveUninitialized: 'false'
 }))
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
 
 app.engine('pug', require('pug').__express)
-app.set('view engine', 'pug');
-app.set('views', '../public/Client');
+app.set('view engine', 'pug')
+app.set('views', '../public/Client')
 
-app.use('/', express.static('../public/Client'));
+app.use('/', express.static('../public/Client'))
 
 ///////////////
 // ENDPOINTS //
@@ -114,8 +114,28 @@ app.get('/token', function (req, res) {
   })  
 })
 
-app.get('/test', function(req, res) {
-  console.log(req.query)
+app.get('/resource', function(req, res) {
+  // Validate GET request
+  if(req.query.word == null || req.query.submit == null || !/^[a-zA-Z]+$/.test(req.query.word))
+    return res.redirect('/callback?error=invalid_request&state=' + utilities.computeHash(req.sessionID))
+  
+  // Construct request body 
+  let body = {    
+    token: req.session.access_token,
+    client_id: storage.client.client_id,
+    action: {
+      word: req.query.word,
+      scope: req.query.submit
+    } 
+  }
+
+  // Send post request to the token endpoint with confidential client authentication
+  axios.post(storage.protectedResourceEndpoints.accessEndpoint, body).then(function (response){
+      res.redirect('/callback?state=' + response.data.state)
+  })
+  .catch(function (error) {        
+    res.redirect('/callback?error=' + error.response.data.error + "&state=" + error.response.data.state)
+  })  
 })
 
 // Initialize server
