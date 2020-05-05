@@ -60,22 +60,29 @@ app.get('/', function(req, res) {
 app.post('/resource', function(req, res) {
   let credentials = new Buffer.from(req.headers.authorization.split(" ")[1], 'base64').toString('ascii').split(":")
 
-  axios.post(storage.authServerEndpoints.introspectionEndpoint, {token: req.body.token}, {
-    auth: {
-      username: credentials[0],
-      password: credentials[1]
-    }
-  })
-  .then(function (response){
-    console.log(response.data)
-    // Analyse response bla bla bla  
-    //res.redirect(req.body.redirect_uri + '?state=' + response.data.state)
-  })
-  .catch(function (error) {
-    return res.status(400).send({error: error.response.data.error, state: req.body.state})    
-  })    
-})
+  // TODO - Cleanup cache
 
+  // Determine whether the pretended token is cached or not
+  if(storage.tokensCache[req.body.token] == null) {
+    axios.post(storage.authServerEndpoints.introspectionEndpoint, {token: req.body.token}, {
+      auth: {
+        username: credentials[0],
+        password: credentials[1]
+      }
+    })
+    .then(function (response){
+      // Update cache storage
+      storage.tokensCache[req.body.token] = response.data
+      storage.updateTokensCache()
+    })
+    .catch(function (error) {
+      return res.status(400).send({error: error.response.data.error, state: req.body.state})    
+    })    
+  }
+  
+  // Verify according the token cached information if operation is valid
+  console.log(req.body.scope)
+})
 
 // Initialize server
 let server = app.listen(9002, 'localhost', function () {

@@ -7,7 +7,24 @@ let storage = require("./Storage.js")
  */
 exports.computeHash = function(value) {
     return crypto.createHash('sha256').update(value).digest('hex');
-  }
+}
+
+/**
+ * Converts the scope from a human friendly manner 
+ * to more technical point of view.
+ */
+exports.convertScope = function(value) {
+    switch(value){
+        case "Search":
+            return "read"
+        case "Insert":
+            return "write"            
+        case "Delete":
+            return "delete"            
+        default:
+            return null
+    }
+}
 
 /**
  * Validates client identifier

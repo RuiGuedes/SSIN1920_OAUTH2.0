@@ -114,19 +114,21 @@ app.get('/token', function (req, res) {
   })  
 })
 
-// localhost:9000/resource?word=Success&submit=Search
+/**
+ * 
+ */
 app.get('/resource', function(req, res) {
   // Validate GET request
-  if(req.query.word == null || req.query.submit == null || !/^[a-zA-Z]+$/.test(req.query.word))
+  if(req.query.word == null || utilities.convertScope(req.query.submit) == null || !/^[a-zA-Z]+$/.test(req.query.word))
     return res.redirect('/callback?error=invalid_request&state=' + utilities.computeHash(req.sessionID))
-  
+
   // Construct request body 
   let body = {    
     token: req.session.access_token,
     client_id: storage.client.client_id,
     action: {
       word: req.query.word,
-      scope: req.query.submit
+      scope: utilities.convertScope(req.query.submit)
     },
     state: utilities.computeHash(req.sessionID)
   }

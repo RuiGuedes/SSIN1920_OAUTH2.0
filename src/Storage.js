@@ -17,20 +17,25 @@ exports.protectedResourceEndpoints = {
 // Authorization Server Information //
 //////////////////////////////////////
  
-exports.clients = JSON.parse(require('fs').readFileSync('AuthServer/json/Clients.json', 'utf8')).clients;
-exports.rsrcOwners = JSON.parse(require('fs').readFileSync('AuthServer/json/ResourceOwners.json', 'utf8'));
-exports.authCodes = JSON.parse(require('fs').readFileSync('AuthServer/json/AuthCodes.json', 'utf8'));
-exports.accessTokens = JSON.parse(require('fs').readFileSync('AuthServer/json/AccessTokens.json', 'utf8'));
+exports.clients = JSON.parse(require('fs').readFileSync('AuthServer/json/Clients.json', 'utf8')).clients
+exports.rsrcOwners = JSON.parse(require('fs').readFileSync('AuthServer/json/ResourceOwners.json', 'utf8'))
+exports.authCodes = JSON.parse(require('fs').readFileSync('AuthServer/json/AuthCodes.json', 'utf8'))
+exports.accessTokens = JSON.parse(require('fs').readFileSync('AuthServer/json/AccessTokens.json', 'utf8'))
 
 exports.updateAuthCodes = function() {
   require('fs').writeFileSync('AuthServer/json/AuthCodes.json', JSON.stringify(this.authCodes, null, 2))
 }
 
 exports.updateAccessTokens = function() {
-  require('fs').writeFileSync('AuthServer/json/AccessTokens.json', JSON.stringify(this.accessTokens, null, 2));
+  require('fs').writeFileSync('AuthServer/json/AccessTokens.json', JSON.stringify(this.accessTokens, null, 2))
 }
 
 ////////////////////////////////////
 // Protected Resource Information //
 ////////////////////////////////////
 
+exports.tokensCache = JSON.parse(require('fs').readFileSync('ProtectedResource/json/Cache.json', 'utf8'))
+
+exports.updateTokensCache = function() {
+  require('fs').writeFileSync('ProtectedResource/json/Cache.json', JSON.stringify(this.tokensCache, null, 2))
+}

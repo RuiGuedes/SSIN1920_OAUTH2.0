@@ -1,3 +1,14 @@
 {
-    
+  "SxtenO4MopzKeV2fMF2tgz1KoCA1L5meOUq1BVEWbED0G59Ec9yaNqaoTUiqp66T": {
+    "active": true,
+    "scope": [
+      "read",
+      "write",
+      "delete"
+    ],
+    "client_id": "oauth-client-1",
+    "username": "JohnDoe",
+    "token_type": "bearer",
+    "exp": 1588709881
+  }
 }

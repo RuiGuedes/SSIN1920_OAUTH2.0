@@ -1,7 +1,7 @@
 {
-  "mrKwJH5e77NQCHXCTCkjkdt34mCvMWrZO8iiK5apflIBRbgMK20nWdiEvdKjp8N2": {
+  "xKZ2qzD83ztOQUnm2Lj3icF5D6ikqTriUUYvvxyIZAllW4CGLun77ifBYtigZxBj": {
     "client_id": "oauth-client-1",
-    "expiration": 1588701667,
+    "expiration": 1588706880,
     "redirect_uri": "http://localhost:9000/callback",
     "scope": [
       "read",
