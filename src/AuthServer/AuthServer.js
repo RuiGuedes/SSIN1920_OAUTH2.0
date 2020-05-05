@@ -236,6 +236,10 @@ app.post('/token', function(req, res) {
   res.status(400).send({error: "invalid_client", state: req.body.state})
 })
 
+app.post('/introspect', function(req, res) {
+  
+})
+
 // Initialize server
 let server = app.listen(9001, 'localhost', function () {
   console.log('OAuth Authorization Server is listening at http://localhost:%s', server.address().port)

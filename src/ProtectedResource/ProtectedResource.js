@@ -49,8 +49,28 @@ app.get('/', function(req, res) {
 	res.render('index', {});
 });
 
+/**
+ * Grants access to the protected resource if the token is valid. At first,
+ * it checks whether the token is cached or not. If the token is not cached 
+ * it makes a POST request to the instrospection endpoint to validate and 
+ * retrieve the token information and caches it. Then with the token information
+ * available it checks whether the desired operation is possible. If it is, it 
+ * is executed successfully, otherwise it returns an error.
+ */
 app.post('/resource', function(req, res) {
-  console.log(req.body)
+  axios.post(storage.authServerEndpoints.introspectionEndpoint, {token: req.body.token}, {
+    auth: {
+      username: storage.protectedResource.protected_rsrc_id,
+      password: storage.protectedResource.protected_rsrc_secret
+    }
+  })
+  .then(function (response){
+    // Analyse response bla bla bla  
+    //res.redirect(req.body.redirect_uri + '?state=' + response.data.state)
+  })
+  .catch(function (error) {        
+    //res.redirect('/callback?error=' + error.response.data.error + "&state=" + error.response.data.state)
+  })    
 })
 
 

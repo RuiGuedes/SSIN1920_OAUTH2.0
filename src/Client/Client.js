@@ -95,7 +95,7 @@ app.get('/token', function (req, res) {
     body.redirect_uri = storage.client.redirect_uris[0]
   }
 
-  // Send post request to the token endpoint with confidential client authentication
+  // Send POST request to the token endpoint with confidential client authentication
   axios.post(storage.authServerEndpoints.tokenEndpoint, body, {
     auth: {
       username: storage.client.client_id,
@@ -114,6 +114,7 @@ app.get('/token', function (req, res) {
   })  
 })
 
+// localhost:9000/resource?word=Success&submit=Search
 app.get('/resource', function(req, res) {
   // Validate GET request
   if(req.query.word == null || req.query.submit == null || !/^[a-zA-Z]+$/.test(req.query.word))
@@ -121,16 +122,18 @@ app.get('/resource', function(req, res) {
   
   // Construct request body 
   let body = {    
-    token: req.session.access_token,
+    token: "drNV3x3vR6SazqsmVQO3pf8piVnwlzxUbuCGK95D4zwMDgQGcM283grCvPjvYiGD", // req.session.access_token,
     client_id: storage.client.client_id,
     action: {
       word: req.query.word,
       scope: req.query.submit
-    } 
+    },
+    state: utilities.computeHash(req.sessionID)
   }
-
-  // Send post request to the token endpoint with confidential client authentication
+  
+  // Send POST request to the protected resource
   axios.post(storage.protectedResourceEndpoints.accessEndpoint, body).then(function (response){
+      //console.log(response.data)
       res.redirect('/callback?state=' + response.data.state)
   })
   .catch(function (error) {        
@@ -144,7 +147,7 @@ let server = app.listen(9000, 'localhost', function () {
 });
  
 // TODO 
-// Add authentiction of client with client_id and client_secret hashed to not be exposed
+// Add authentiction between servers with hashing the password and ID
 // Duplicated endpoints refactor when adding the introspection endpoint
 // Add introspection endpoint 
 //   - Must do all verifications

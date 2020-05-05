@@ -4,7 +4,8 @@ exports.client = JSON.parse(require('fs').readFileSync('Client/json/Data.json', 
 // Authorization Server Endpoints
 exports.authServerEndpoints = {
   tokenEndpoint: 'http://localhost:9001/token',
-  authorizationEndpoint: 'http://localhost:9001/authorize'
+  authorizationEndpoint: 'http://localhost:9001/authorize',
+  introspectionEndpoint: 'http://localhost:9001/introspect'
 }
 
 // Authorization Server Endpoints
@@ -28,3 +29,10 @@ exports.updateAuthCodes = function() {
 exports.updateAccessTokens = function() {
   require('fs').writeFileSync('AuthServer/json/AccessTokens.json', JSON.stringify(this.accessTokens, null, 2));
 }
+
+////////////////////////////////////
+// Protected Resource Information //
+////////////////////////////////////
+
+// Client Information
+exports.protectedResource = JSON.parse(require('fs').readFileSync('ProtectedResource/json/Data.json', 'utf8'))
