@@ -1,11 +1,15 @@
 {
-  "EmuqZRZHSTtj8mamd9nsHHmWY5WFPf4r33ZumcuuekfnOqcJIgskTLAkkADCN6hS": {
+  "q9F7EP2CVIlWtIkfTGkLBWKwpF6U8fDVn2JtUdcmyEE175JM6dIVf685CyoORLeg": {
     "token_type": "bearer",
-    "expires_in": 1588622148,
-    "refresh_token": "MrrMWjrx1PmnzSHd408DrI052aVze71LVIOGnfgcAGANeCu80BoLc8icXAtgxQvK",
-    "refresh_token_expiration": 1588704948,
-    "auth_code": "4ARy0yBuvnCe8ochFyE5Tox3pBpwSjHqymmzswxkCaW2mEbgHceiL1j2JXLqDcFN",
+    "expires_in": 1588681656,
+    "refresh_token": "9NHLT3fGhVa1LhEmevkQw9RluLrmSPWTOJYhaMM8si3NR9PluhkiBt0ouCWye6qq",
+    "refresh_token_expiration": 1588764456,
+    "auth_code": "Pmaa6p5CCoFA9lxHK4xlV1BCFJiN4LJNTm7bswZArmXVVNO2bmBQQGYPDiyqu1R0",
     "client_id": "oauth-client-1",
-    "scope": "read"
+    "scope": [
+      "read",
+      "write",
+      "delete"
+    ]
   }
 }

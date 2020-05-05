@@ -1,9 +1,13 @@
 {
-  "4ARy0yBuvnCe8ochFyE5Tox3pBpwSjHqymmzswxkCaW2mEbgHceiL1j2JXLqDcFN": {
+  "Pmaa6p5CCoFA9lxHK4xlV1BCFJiN4LJNTm7bswZArmXVVNO2bmBQQGYPDiyqu1R0": {
     "client_id": "oauth-client-1",
-    "expiration": 1588619146,
+    "expiration": 1588678655,
     "redirect_uri": "http://localhost:9000/callback",
-    "scope": "read",
+    "scope": [
+      "read",
+      "write",
+      "delete"
+    ],
     "used": true
   }
 }

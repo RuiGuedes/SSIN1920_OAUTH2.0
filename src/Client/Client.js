@@ -110,6 +110,10 @@ app.get('/token', function (req, res) {
   })  
 })
 
+app.post('/test', function(req, res) {
+  console.log(req.body)
+})
+
 // Initialize server
 let server = app.listen(9000, 'localhost', function () {
   console.log('OAuth Client is listening at http://localhost:%s', server.address().port);

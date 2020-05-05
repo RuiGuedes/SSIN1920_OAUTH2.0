@@ -55,34 +55,30 @@ html(lang='en')
                         a(class='btn btn-primary' href= "http://localhost:9000/token") Get OAuth Token
 
             if !(typeof(scope) == 'undefined' || scope == null)
-                h2 Protected Resources
-                div(class="info")
-                    div(class="buttons")
-                        label(for='word', hidden="true") Word:
-                        input#word.form-control(type='text', name='word', placeholder="Word", required="true")
-                        script
-                            include script.js
-                        br
-                        
-                        if (Array.isArray(scope))
-                            - length = scope.length
-                        else
-                            - length = 1 
-                        - var n = 0
-                        while n < length
-                            if (length == 1)
-                                - action = scope
-                            else
-                                - action = scope[n]
-                            button.btn.btn-primary(type='submit', value=`${action}`)
-                                case action
-                                    when "read"
-                                        | Search
-                                    when "write"
-                                        | Insert
-                                    when "delete"
-                                        | Delete
-                            - n++
+                h2 Access Protected Resource
+                div(class="info")                    
+                        div(class="buttons")
+                            form(method='POST' action='/test')
+                                label(for='word', hidden="true") Word:
+                                input#word.form-control(type='text', name='word', placeholder="Word", required="true")
+                                script
+                                    include script.js
+                                br
+                                
+                                if (Array.isArray(scope))
+                                    - length = scope.length
+                                else
+                                    - length = 1 
+                                - var n = 0
+                                while n < length
+                                    if (length == 1)
+                                        - action = scope
+                                    else
+                                        - action = scope[n]
+                                    input(type="submit", name="submit", value=`${action}`)                                
+                                        
+                                    - n++
+                                button.btn.btn-primary(type='submit') Allow
 
         div(class="column")
             h2 Log Console
