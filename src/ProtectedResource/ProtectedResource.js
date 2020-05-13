@@ -72,17 +72,19 @@ app.post('/resource', function(req, res) {
       }
     })
     .then(function (response){
-      // Update cache storage
+      // Update cache storage      
       storage.tokensCache[req.body.token] = response.data
       storage.updateTokensCache()
+      
+      // Verify according the token cached information if operation is valid and execute it       
+      return res.status(200).send(utilities.accessResource(req.body.token, req.body))      
     })
-    .catch(function (error) {
+    .catch(function (error) {       
       return res.status(400).send({error: error.response.data.error, state: req.body.state})    
     })    
   }
-  
-  // Verify according the token cached information if operation is valid
-  console.log(req.body.scope)
+  else
+    return res.status(200).send(utilities.accessResource(req.body.token, req.body))
 })
 
 // Initialize server

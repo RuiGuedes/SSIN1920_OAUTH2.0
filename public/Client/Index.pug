@@ -62,6 +62,8 @@ html(lang='en')
                                 div.form-group
                                     label(for='word', hidden="true") Word:
                                     input#word.form-control(type='text', name='word', placeholder="Word", required="true", value="Success")
+                                    label(for='meaning', hidden="true") Meaning:
+                                    input#word.form-control(type='text', name='meaning', placeholder="Meaning")
                                     script
                                         include script.js
 
@@ -73,11 +75,14 @@ html(lang='en')
                                         when "read"
                                             - text = "Search"
                                         when "write"
-                                            - text = "Insert"
+                                            - text = "Insert / Replace"
                                         when "delete"
                                             - text = "Delete"
                                     input.btn.btn-primary(type="submit", name="submit", value=`${text}`)
                                     - n++
+                        div(class="result")
+                            p #{info}  
+                            p #{error}      
 
         div(class="column")
             h2 Log Console

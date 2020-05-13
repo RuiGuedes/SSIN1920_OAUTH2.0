@@ -35,7 +35,12 @@ exports.updateAccessTokens = function() {
 ////////////////////////////////////
 
 exports.tokensCache = JSON.parse(require('fs').readFileSync('ProtectedResource/json/Cache.json', 'utf8'))
+exports.dictionary = JSON.parse(require('fs').readFileSync('ProtectedResource/json/Dictionary.json', 'utf8'))
 
 exports.updateTokensCache = function() {
   require('fs').writeFileSync('ProtectedResource/json/Cache.json', JSON.stringify(this.tokensCache, null, 2))
+}
+
+exports.updateDictionary = function() {
+  require('fs').writeFileSync('ProtectedResource/json/Dictionary.json', JSON.stringify(this.dictionary, null, 2))
 }

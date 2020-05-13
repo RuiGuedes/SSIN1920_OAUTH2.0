@@ -68,6 +68,7 @@ app.get('/callback', function (req, res) {
                         refresh_token: req.session.refresh_token, 
                         scope: req.session.scope,
                         error: req.query.error,
+                        info: req.query.info,
                         auth_endpoint: storage.authServerEndpoints.authorizationEndpoint + "?"
                                       + "response_type=code" + "&"
                                       + "client_id=" + storage.client.client_id + "&"
@@ -119,7 +120,8 @@ app.get('/token', function (req, res) {
  */
 app.get('/resource', function(req, res) {
   // Validate GET request
-  if(req.query.word == null || utilities.convertScope(req.query.submit) == null || !/^[a-zA-Z]+$/.test(req.query.word))
+  if(req.query.word == "" || !/^[a-zA-Z]+$/.test(req.query.word) || utilities.convertScope(req.query.submit) == null || 
+    (req.query.submit == "Insert / Replace" && (req.query.meaning == "" || !/^[a-zA-Z\s]+$/.test(req.query.meaning)))) 
     return res.redirect('/callback?error=invalid_request&state=' + utilities.computeHash(req.sessionID))
 
   // Construct request body 
@@ -128,6 +130,7 @@ app.get('/resource', function(req, res) {
     client_id: storage.client.client_id,
     action: {
       word: req.query.word,
+      meaning: req.query.meaning == null ? "" : req.query.meaning,
       scope: utilities.convertScope(req.query.submit)
     },
     state: utilities.computeHash(req.sessionID)
@@ -140,11 +143,14 @@ app.get('/resource', function(req, res) {
       password: utilities.computeHash(storage.client.client_secret)
     }
   })
-  .then(function (response){
-      //console.log(response.data)
-      res.redirect('/callback?state=' + response.data.state)
+  .then(function (response){    
+    if(response.data.info == null)
+      return res.redirect("/callback?error=forbidden&state=" + error.response.data.state)
+    else      
+      return res.redirect('/callback?info=' + response.data.info + '&state=' + response.data.state)
   })
   .catch(function (error) {        
+    console.log("122222")
     res.redirect('/callback?error=' + error.response.data.error + "&state=" + error.response.data.state)
   })  
 })

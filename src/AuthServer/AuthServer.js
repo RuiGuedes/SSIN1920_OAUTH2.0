@@ -32,7 +32,7 @@ app.use('/', express.static('../public/AuthServer'))
 // GLOBAL //
 ////////////
 
-let GENERATOR_SIZE = 64
+let GENERATOR_SIZE = 128
 
 ///////////////
 // ENDPOINTS //
@@ -255,22 +255,22 @@ app.post('/introspect', function(req, res) {
       let tokenInfo = storage.accessTokens[req.body.token]
       let d = new Date();
       let currTime = Math.round(d.getTime() / 1000)
-
+      
       // Invalid/Revoked/Expired token
       if(tokenInfo == null || currTime > tokenInfo.expires_in)      
-        return res.send({active: false})
+        return res.status(200).send({active: false})
       
       // Return token information
-      return res.send({active: currTime < tokenInfo.expires_in,
-                       scope: tokenInfo.scope,
-                       client_id: tokenInfo.client_id,
-                       username: tokenInfo.username,
-                       token_type: tokenInfo.token_type,
-                       exp: tokenInfo.expires_in
-                      })
+      return res.status(200).send({active: currTime < tokenInfo.expires_in,
+                                   scope: tokenInfo.scope,
+                                   client_id: tokenInfo.client_id,
+                                   username: tokenInfo.username,
+                                   token_type: tokenInfo.token_type,
+                                   exp: tokenInfo.expires_in
+                                   })
     }   
   }
-
+  
   res.status(401).send({error: "Unauthorized"})
 })
 

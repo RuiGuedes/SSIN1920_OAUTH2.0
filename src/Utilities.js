@@ -17,7 +17,7 @@ exports.convertScope = function(value) {
     switch(value){
         case "Search":
             return "read"
-        case "Insert":
+        case "Insert / Replace":
             return "write"            
         case "Delete":
             return "delete"            
@@ -181,4 +181,59 @@ exports.cleanupTokensCache = function() {
 
     // Update storage
     storage.updateTokensCache()
+}
+
+/**
+ * Determines whether the action scope is on the scope list or not. Returns true if it is,
+ * false otherwise.
+ * @param {string} actionScope Scope of the action 
+ * @param {string} scope List of scopes
+ */
+exports.isOutOfScope = function(actionScope, scope) {
+    for(value in scope) {
+      if(value == actionScope)
+        return true
+    }
+    return false
+}
+
+/**
+ * Determines whether the operation specified in the request can be performed or not.
+ * If it can it performs the operation and returns the result, otherwise returns the 
+ * result with the info field equal to null.
+ * @param {string} token Token passed in the request
+ * @param {object} request Request body that contains 
+ */
+exports.accessResource = function(token, request) {
+    // Retrieve token information
+    let result = {info: null, state: request.state}
+    let tokenInfo =  storage.tokensCache[token]
+  
+    // Validate operation information
+    if(tokenInfo == null || !tokenInfo.active || tokenInfo.client_id != request.client_id || this.isOutOfScope(request.action.scope, tokenInfo.scope))
+      return result
+  
+    // Word meaning
+    let meaning = storage.dictionary[request.action.word]
+  
+    switch(request.action.scope) {
+      case "read":      
+        result["info"] = meaning == null ? "Word not found!" : request.action.word + ": " + meaning
+        break;
+      case "write":
+        storage.dictionary[request.action.word] =  request.action.meaning
+        result["info"] = "Word inserted with success!"
+        break;
+      case "delete":
+        if(meaning != null)
+          delete storage.dictionary[request.action.word]  
+  
+        result["info"] = meaning == null ? "Such word does not exist!" : "Word deleted with success!"
+        break;
+    }
+    
+    // Update dictionary
+    storage.updateDictionary()
+  
+    return result
 }
