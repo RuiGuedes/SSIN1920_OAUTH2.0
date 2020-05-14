@@ -237,3 +237,22 @@ exports.accessResource = function(token, request) {
   
     return result
 }
+
+/**
+ * Updates the log structure associated to a specific server
+ * @param {string} server Server where logs should be associated with 
+ * @param {string} msg Message to be added to the logs structure
+ */
+exports.updateLogs = function(server, msg) {
+    switch(server) {
+        case "Client":
+            storage.clientLogs.push(msg)
+            break
+        case "Auth":
+            storage.authLogs.push(msg)
+            break
+        case "Resource":
+            storage.resourceLogs.push(msg)
+            break
+    }
+}

@@ -33,10 +33,7 @@ app.use('/', express.static('../public/protectedResource'));
 // GLOBAL //
 ////////////
 
-let resource = {
-	"name": "Protected Resource",
-	"description": "This data has been protected by OAuth 2.0"
-};
+let SERVER = 'Resource'
 
 ///////////////
 // ENDPOINTS //

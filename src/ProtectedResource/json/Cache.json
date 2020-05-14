@@ -1,3 +1,25 @@
 {
-  
+  "Eyio9OmMm9rIOaYbG7HlpA9IJERgNKi0PBPaNAiNvG6rgAlBKBSIo2ExhnqpxhiBf6mQk5uA60kaDXgr0piRsBOpIYJahWvq7Ag3MMtyryCTzPgyyM95N7E3dmqpqAAa": {
+    "active": true,
+    "scope": [
+      "read",
+      "write",
+      "delete"
+    ],
+    "client_id": "oauth-client-1",
+    "username": "JohnDoe",
+    "token_type": "bearer",
+    "exp": 1589459902
+  },
+  "Syj4OWvEzsIxXanvbdun1daTkPdZLK74iQnxmxD9couND1fdY3svGhbqGO1SDpiJCQWCZ0bJ04CxgMVWujeK2lDfdTQXdwDLDsp5QovGIG1JlcMEI8P6JrFqDju6YfjQ": {
+    "active": true,
+    "scope": [
+      "read",
+      "delete"
+    ],
+    "client_id": "oauth-client-1",
+    "username": "JohnDoe",
+    "token_type": "bearer",
+    "exp": 1589460027
+  }
 }

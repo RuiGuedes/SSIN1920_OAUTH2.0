@@ -1,11 +1,10 @@
 {
-  "klhDhCYIEYNXrDEf2gwI3OQIpG2jX2xZ5lWMXaKEcJktkO391xJe3IQF713yIl29VE15YHgKLccaRMqVeH5k6BQmZzwt5rh0v75XIAfveLwiBCrlUxZlJFxflhGm7tT0": {
+  "hQ3QdVQUCVEnTselkrg7QB8f6g9Orlez2uHUNH17UsjbHb9bqpVT9I59uSSGk64z8lSJ9Vw1rmxdwz4sYTuBGlxYrY9soaPYQCW4bowcPrFcFndoLKOJXCRBmcLLyVBb": {
     "client_id": "oauth-client-1",
-    "expiration": 1589398799,
+    "expiration": 1589457025,
     "redirect_uri": "http://localhost:9000/callback",
     "scope": [
       "read",
-      "write",
       "delete"
     ],
     "username": "JohnDoe",

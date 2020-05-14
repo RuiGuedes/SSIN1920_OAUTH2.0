@@ -32,6 +32,7 @@ app.use('/', express.static('../public/AuthServer'))
 // GLOBAL //
 ////////////
 
+let SERVER = 'Auth'
 let GENERATOR_SIZE = 128
 
 ///////////////
@@ -68,7 +69,7 @@ app.get('/authorize', function(req, res) {
     return res.redirect(req.query.redirect_uri + "?error=invalid_scope&state=" + req.query.state)
 
   // Authenticate resource owner
-  req.session.request = req.query
+  req.session.request = req.query  
   res.redirect('/authentication')
 });
 
@@ -82,7 +83,9 @@ app.get('/authentication', function(req, res) {
   if(req.session.userID != null && req.session.userID.includes(req.session.request.state))
     res.redirect('/permissions')
   else
-	  res.render('Auth', {status: req.query.status == null ? "" : "Invalid credentials"})
+    res.render('Auth', {status: req.query.status == null ? "" : "Invalid credentials",
+                        logs: logs
+                        })
 })
 
 /**

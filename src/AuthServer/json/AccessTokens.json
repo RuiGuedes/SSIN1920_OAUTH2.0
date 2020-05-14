@@ -1,15 +1,14 @@
 {
-  "VvcNIzOD2PG5qZFX2LX1KSAdGPStnMGdMf6YT7chnIzcT9jN6MddHLvanbsrySJDdkfOTQLo18csXgZj1ovy2Vp9QZPKhhEOO1j13JOPDLJMFegHJWlczwOApL0qbebq": {
+  "Syj4OWvEzsIxXanvbdun1daTkPdZLK74iQnxmxD9couND1fdY3svGhbqGO1SDpiJCQWCZ0bJ04CxgMVWujeK2lDfdTQXdwDLDsp5QovGIG1JlcMEI8P6JrFqDju6YfjQ": {
     "token_type": "bearer",
-    "expires_in": 1589401801,
-    "refresh_token": "tL1fBQKDGTLCjGFfwyVG9BmapH0eKFCeZGH7Y4yUkNhJIoWCCuwbi838m3onEdk5AzqANMzgETjb0tSbE8KjVY9ySXoTfBasUNxZeMpHYaU1Zex2jK5CmOaJo8W5f60W",
-    "refresh_token_expiration": 1589484601,
-    "auth_code": "klhDhCYIEYNXrDEf2gwI3OQIpG2jX2xZ5lWMXaKEcJktkO391xJe3IQF713yIl29VE15YHgKLccaRMqVeH5k6BQmZzwt5rh0v75XIAfveLwiBCrlUxZlJFxflhGm7tT0",
+    "expires_in": 1589460027,
+    "refresh_token": "ltqpHXqxwshsKC6j74UyHbkJM5jBUEDxWHCcFJgTzR9PoHtzZrKayWRGy8q4fUjvWLbroLMZgRCoyBMrXmRyKodGSNX5pO7ovWhvFfbOM6OHpIOmFqovdIvbt6otO3D8",
+    "refresh_token_expiration": 1589542827,
+    "auth_code": "hQ3QdVQUCVEnTselkrg7QB8f6g9Orlez2uHUNH17UsjbHb9bqpVT9I59uSSGk64z8lSJ9Vw1rmxdwz4sYTuBGlxYrY9soaPYQCW4bowcPrFcFndoLKOJXCRBmcLLyVBb",
     "client_id": "oauth-client-1",
     "username": "JohnDoe",
     "scope": [
       "read",
-      "write",
       "delete"
     ]
   }
