@@ -67,9 +67,27 @@ body h2 {
     text-align: center;
 }
 
+.result {
+    margin: 15px;
+}
+
+.result span {
+    font-weight: normal;
+    font-size: larger;
+}
+
+span.success {
+    color: rgb(0, 225, 0);
+}
+
+span.error {
+    color: red;
+}
+
 input.form-control {
     display: inline-block;
-    width: 300px;
+    width: 200px;
+    margin: 0 8px 8px 8px
 }
 
 .btn.btn-primary {
@@ -79,7 +97,7 @@ input.form-control {
     font-style: italic;
     font-size: large;
     padding: 4px 25px;
-    margin: 15px 8px 0 8px;
+    margin: 8px;
 }
 
 .btn.btn-primary:hover {
@@ -95,7 +113,7 @@ a.btn.btn-primary {
     font-style: italic;
     font-size: large;
     padding: 4px 25px;
-    margin: 6px 0;
+    margin: 6px 10px;
     width: 300px;
 }
 

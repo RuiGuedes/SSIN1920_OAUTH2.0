@@ -48,7 +48,6 @@ html(lang='en')
                         | #{refresh_token}
                 div(class="buttons")
                     a(class='btn btn-primary' href= `${auth_endpoint}`) Get OAuth Authorization Code
-                    br
                     if (auth_code == null)
                         a(class='btn btn-primary' disabled) Get OAuth Token
                     else 
@@ -66,6 +65,11 @@ html(lang='en')
                                     input#word.form-control(type='text', name='meaning', placeholder="Meaning")
                                     script
                                         include script.js
+                                
+                                div(class="result")
+                                    span(class="success") #{info}
+                                    if !(typeof(error) == 'undefined' || error == null)
+                                        span(class="error") Invalid Request
 
                                 - (Array.isArray(scope))? length = scope.length : length = 1 
                                 - var n = 0
@@ -80,9 +84,7 @@ html(lang='en')
                                             - text = "Delete"
                                     input.btn.btn-primary(type="submit", name="submit", value=`${text}`)
                                     - n++
-                        div(class="result")
-                            p #{info}  
-                            p #{error}      
+                             
 
         div(class="column")
             h2 Log Console
