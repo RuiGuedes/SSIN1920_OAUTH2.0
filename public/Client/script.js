@@ -4,6 +4,4 @@ input_word.addEventListener('keypress', function(event) {
     if(event.keyCode === 32) {
         event.preventDefault();
     }
-
-    console.log(input_word.value);
 });

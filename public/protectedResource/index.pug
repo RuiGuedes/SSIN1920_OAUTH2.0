@@ -13,6 +13,11 @@ html(lang='en')
 
     script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js")
     script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js")
+    script. 
+        window.onload=function () {
+            var objDiv = document.getElementById("console");
+            objDiv.scrollTop = objDiv.scrollHeight;
+        }
 
     body    
         nav(class="navbar navbar-fixed-top")
@@ -27,7 +32,7 @@ html(lang='en')
             
             div(class="column")
                 h2 Log Console
-                div(class="console")
+                div(class="console", id="console")
                     span(class="console-icon") !{"&gt; "}
                     if logs
                         each line in logs

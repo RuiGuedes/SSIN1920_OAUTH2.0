@@ -12,6 +12,11 @@ html(lang='en')
 
     script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js")
     script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js")
+    script. 
+        window.onload=function () {
+            var objDiv = document.getElementById("console");
+            objDiv.scrollTop = objDiv.scrollHeight;
+        }
 
   body
     nav(class="navbar navbar-fixed-top")
@@ -56,39 +61,38 @@ html(lang='en')
             if !(typeof(scope) == 'undefined' || scope == null)
                 h2 Access Protected Resource
                 div(class="info")                    
-                        div(class="buttons")
-                            form(method='GET' action='/resource')
-                                div.form-group
-                                    label(for='word', hidden="true") Word:
-                                    input#word.form-control(type='text', name='word', placeholder="Word", required="true", value="Success")
-                                    label(for='meaning', hidden="true") Meaning:
-                                    input#word.form-control(type='text', name='meaning', placeholder="Meaning")
-                                    script
-                                        include script.js
-                                
-                                div(class="result")
-                                    span(class="success") #{info}
-                                    if !(typeof(error) == 'undefined' || error == null)
-                                        span(class="error") Invalid Request
+                    div(class="buttons")
+                        form(method='GET' action='/resource')
+                            div.form-group
+                                label(for='word', hidden="true") Word:
+                                input#word.form-control(type='text', name='word', placeholder="Word", required="true", value="Success")
+                                label(for='meaning', hidden="true") Meaning:
+                                input#word.form-control(type='text', name='meaning', placeholder="Meaning")
+                                script
+                                    include script.js
+                            
+                            div(class="result")
+                                span(class="success") #{info}
+                                if !(typeof(error) == 'undefined' || error == null)
+                                    span(class="error") Invalid Request
 
-                                - (Array.isArray(scope))? length = scope.length : length = 1 
-                                - var n = 0
-                                while n < length
-                                    - (length == 1)? action = scope : action = scope[n]
-                                    case action
-                                        when "read"
-                                            - text = "Search"
-                                        when "write"
-                                            - text = "Insert / Replace"
-                                        when "delete"
-                                            - text = "Delete"
-                                    input.btn.btn-primary(type="submit", name="submit", value=`${text}`)
-                                    - n++
+                            - (Array.isArray(scope))? length = scope.length : length = 1 
+                            - var n = 0
+                            while n < length
+                                - (length == 1)? action = scope : action = scope[n]
+                                case action
+                                    when "read"
+                                        - text = "Search"
+                                    when "write"
+                                        - text = "Insert / Replace"
+                                    when "delete"
+                                        - text = "Delete"
+                                input.btn.btn-primary(type="submit", name="submit", value=`${text}`)
+                                - n++
                              
-
         div(class="column")
             h2 Log Console
-            div(class="console")
+            div(class="console", id="console")
                 span(class="console-icon") !{"&gt; "}
                 if logs
                     each line in logs
