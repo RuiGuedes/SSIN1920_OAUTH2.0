@@ -43,7 +43,7 @@ let SERVER = 'Resource'
  * Default endpoint
  */
 app.get('/', function(req, res) {
-	res.render('index', {});
+	res.render('index', {logs: storage.resourceLogs});
 });
 
 /**
@@ -55,10 +55,17 @@ app.get('/', function(req, res) {
  * is executed successfully, otherwise it returns an error.
  */
 app.post('/resource', function(req, res) {
+  // Update protected resource console logs
+  utilities.updateLogs(SERVER, "/resource :: Received the following request :: " + JSON.stringify(req.body))
+
   let credentials = new Buffer.from(req.headers.authorization.split(" ")[1], 'base64').toString('ascii').split(":")
 
-  // Cleanup cache
+  // Cleanup cache & Update protected resource console logs
   utilities.cleanupTokensCache()
+  utilities.updateLogs(SERVER, "/resource :: Cleanup cache")
+
+  // Update protected resource console logs
+  utilities.updateLogs(SERVER, "/resource :: [Post][Request][" + storage.authServerEndpoints.introspectionEndpoint + "] ::" + JSON.stringify({token: req.body.token}))
 
   // Determine whether the pretended token is cached or not
   if(storage.tokensCache[req.body.token] == null) {
@@ -69,14 +76,20 @@ app.post('/resource', function(req, res) {
       }
     })
     .then(function (response){
+      // Update protected resource console logs
+      utilities.updateLogs(SERVER, "/resource :: [Post][Response][" + storage.authServerEndpoints.introspectionEndpoint + "] ::" + JSON.stringify(response.data))
+
       // Update cache storage      
       storage.tokensCache[req.body.token] = response.data
       storage.updateTokensCache()
+      utilities.updateLogs(SERVER, "/resource :: Update cache storage")
       
       // Verify according the token cached information if operation is valid and execute it       
       return res.status(200).send(utilities.accessResource(req.body.token, req.body))      
     })
-    .catch(function (error) {       
+    .catch(function (error) {
+      // Update protected resource console logs
+      utilities.updateLogs(SERVER, "/resource :: [Post][Response][" + storage.authServerEndpoints.introspectionEndpoint + "] ::" + JSON.stringify(error.response.data))   
       return res.status(400).send({error: error.response.data.error, state: req.body.state})    
     })    
   }

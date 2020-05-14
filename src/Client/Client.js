@@ -133,7 +133,7 @@ app.get('/token', function (req, res) {
   })
   .then(function (response){
     // Update client console logs
-    utilities.updateLogs(SERVER, "/token :: [POST][RESPONSE][" + storage.authServerEndpoints.tokenEndpoint + "] :: " + JSON.stringify(response.data))
+    utilities.updateLogs(SERVER, "/token :: [Post][Response][" + storage.authServerEndpoints.tokenEndpoint + "] :: " + JSON.stringify(response.data))
 
     req.session.access_token = response.data.access_token
     req.session.refresh_token = response.data.refresh_token
@@ -142,7 +142,7 @@ app.get('/token', function (req, res) {
   })
   .catch(function (error) {
     // Update client console logs
-    utilities.updateLogs(SERVER, "/token :: [POST][RESPONSE][" + storage.authServerEndpoints.tokenEndpoint + "] :: " + JSON.stringify(response.data))
+    utilities.updateLogs(SERVER, "/token :: [Post][Response][" + storage.authServerEndpoints.tokenEndpoint + "] :: " + JSON.stringify(response.data))
 
     req.session.auth_code = req.session.access_token = req.session.refresh_token = req.session.scope = null
     res.redirect('/callback?error=' + error.response.data.error + "&state=" + error.response.data.state)
@@ -150,7 +150,7 @@ app.get('/token', function (req, res) {
 })
 
 /**
- * 
+ * Endpoint used to access the protected resource
  */
 app.get('/resource', function(req, res) {
   // Validate GET request
@@ -171,7 +171,7 @@ app.get('/resource', function(req, res) {
   }
   
   // Update client console logs
-  utilities.updateLogs(SERVER, "/token :: [POST][RESPONSE][" + storage.protectedResourceEndpoints.resourceEndpoint + "] :: " + JSON.stringify(body))
+  utilities.updateLogs(SERVER, "/token :: [Post][Response][" + storage.protectedResourceEndpoints.resourceEndpoint + "] :: " + JSON.stringify(body))
 
   // Send POST request to the protected resource
   axios.post(storage.protectedResourceEndpoints.resourceEndpoint, body,  {
@@ -182,7 +182,7 @@ app.get('/resource', function(req, res) {
   })
   .then(function (response){  
     // Update client console logs
-    utilities.updateLogs(SERVER, "/token :: [POST][RESPONSE][" + storage.protectedResourceEndpoints.resourceEndpoint + "] :: " + JSON.stringify(response.data))
+    utilities.updateLogs(SERVER, "/token :: [Post][Response][" + storage.protectedResourceEndpoints.resourceEndpoint + "] :: " + JSON.stringify(response.data))
 
     if(response.data.info == null)
       return res.redirect("/callback?error=forbidden&state=" + error.response.data.state)
@@ -191,7 +191,7 @@ app.get('/resource', function(req, res) {
   })
   .catch(function (error) {       
     // Update client console logs 
-    utilities.updateLogs(SERVER, "/token :: [POST][RESPONSE][" + storage.protectedResourceEndpoints.resourceEndpoint + "] :: " + JSON.stringify(error.response.data))
+    utilities.updateLogs(SERVER, "/token :: [Post][Response][" + storage.protectedResourceEndpoints.resourceEndpoint + "] :: " + JSON.stringify(error.response.data))
     
     res.redirect('/callback?error=' + error.response.data.error + "&state=" + error.response.data.state)
   })  
