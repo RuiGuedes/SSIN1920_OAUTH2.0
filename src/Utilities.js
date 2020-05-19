@@ -187,14 +187,15 @@ exports.cleanupTokensCache = function() {
  * Determines whether the action scope is on the scope list or not. Returns true if it is,
  * false otherwise.
  * @param {string} actionScope Scope of the action 
- * @param {string} scope List of scopes
+ * @param {string[]} scope List of scopes
  */
 exports.isOutOfScope = function(actionScope, scope) {
-    for(value in scope) {
-      if(value == actionScope)
-        return true
+    for (let value of scope) {
+        if (value === actionScope)
+            return false
     }
-    return false
+
+    return true
 }
 
 /**

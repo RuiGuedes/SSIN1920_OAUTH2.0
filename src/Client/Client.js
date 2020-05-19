@@ -154,8 +154,8 @@ app.get('/token', function (req, res) {
  */
 app.get('/resource', function(req, res) {
   // Validate GET request
-  if(req.query.word == "" || !/^[a-zA-Z]+$/.test(req.query.word) || utilities.convertScope(req.query.submit) == null || 
-    (req.query.submit == "Insert / Replace" && (req.query.meaning == "" || !/^[a-zA-Z\s]+$/.test(req.query.meaning)))) 
+  if (req.query.word == "" || !/^[a-zA-Z0-9]+$/.test(req.query.word) || utilities.convertScope(req.query.submit) == null ||
+     (req.query.submit == "Insert / Replace" && (req.query.meaning == "" || !/^[a-zA-Z0-9\s]+$/.test(req.query.meaning))))
     return res.redirect('/callback?error=invalid_request&state=' + utilities.computeHash(req.sessionID))
 
   // Construct request body 
@@ -185,7 +185,7 @@ app.get('/resource', function(req, res) {
     utilities.updateLogs(SERVER, "/token :: [Post][Response][" + storage.protectedResourceEndpoints.resourceEndpoint + "] :: " + JSON.stringify(response.data))
 
     if(response.data.info == null)
-      return res.redirect("/callback?error=forbidden&state=" + error.response.data.state)
+      return res.redirect("/callback?error=forbidden&state=" + response.data.state)
     else      
       return res.redirect('/callback?info=' + response.data.info + '&state=' + response.data.state)
   })
