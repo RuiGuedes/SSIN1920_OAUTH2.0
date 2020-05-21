@@ -58,47 +58,42 @@ app.post('/resource', function(req, res) {
   // Update protected resource console logs
   utilities.updateLogs(SERVER, "/resource :: Received the following request :: " + JSON.stringify(req.body))
 
-  let credentials = new Buffer.from(req.headers.authorization.split(" ")[1], 'base64').toString('ascii').split(":")
-  for(client of storage.clients) {    
-    // Validate client authentication
-    if(credentials[0] == client.client_id && utilities.PBKDF2(credentials[1], client.salt) == client.client_secret) {
-      // Cleanup cache & Update protected resource console logs
-      utilities.cleanupTokensCache()
-      utilities.updateLogs(SERVER, "/resource :: Cleanup cache")
+  // Cleanup cache & Update protected resource console logs
+  utilities.cleanupTokensCache()
+  utilities.updateLogs(SERVER, "/resource :: Cleanup cache")
 
-      // Update protected resource console logs
-      utilities.updateLogs(SERVER, "/resource :: [Post][Request][" + storage.authServerEndpoints.introspectionEndpoint + "] ::" + JSON.stringify({token: req.body.token}))
+  // Update protected resource console logs
+  utilities.updateLogs(SERVER, "/resource :: [Post][Request][" + storage.authServerEndpoints.introspectionEndpoint + "] ::" + JSON.stringify({token: req.body.token}))
 
-      // Determine whether the pretended token is cached or not
-      if(storage.tokensCache[req.body.token] == null) {
-        axios.post(storage.authServerEndpoints.introspectionEndpoint, {token: req.body.token}, {
-          auth: {
-            username: storage.resource.resource_id,
-            password: storage.resource.resource_secret
-          }
-        })
-        .then(function (response){
-          // Update protected resource console logs
-          utilities.updateLogs(SERVER, "/resource :: [Post][Response][" + storage.authServerEndpoints.introspectionEndpoint + "] ::" + JSON.stringify(response.data))
-
-          // Update cache storage      
-          storage.tokensCache[req.body.token] = response.data
-          storage.updateTokensCache()
-          utilities.updateLogs(SERVER, "/resource :: Update cache storage")
-          
-          // Verify according the token cached information if operation is valid and execute it       
-          return res.status(200).send(utilities.accessResource(req.body.token, req.body))      
-        })
-        .catch(function (error) {
-          // Update protected resource console logs
-          utilities.updateLogs(SERVER, "/resource :: [Post][Response][" + storage.authServerEndpoints.introspectionEndpoint + "] ::" + JSON.stringify(error.response.data))   
-          return res.status(400).send({error: error.response.data.error})    
-        })    
+  // Determine whether the pretended token is cached or not
+  if(storage.tokensCache[req.body.token] == null) {
+    axios.post(storage.authServerEndpoints.introspectionEndpoint, {token: req.body.token}, {
+      auth: {
+        username: storage.resource.resource_id,
+        password: storage.resource.resource_secret
       }
-      else
-        return res.status(200).send(utilities.accessResource(req.body.token, req.body))
-    }
+    })
+    .then(function (response){
+      // Update protected resource console logs
+      utilities.updateLogs(SERVER, "/resource :: [Post][Response][" + storage.authServerEndpoints.introspectionEndpoint + "] ::" + JSON.stringify(response.data))
+
+      // Update cache storage      
+      storage.tokensCache[req.body.token] = response.data
+      storage.updateTokensCache()
+      utilities.updateLogs(SERVER, "/resource :: Update cache storage")
+      
+      // Verify according the token cached information if operation is valid and execute it       
+      return res.status(200).send(utilities.accessResource(req.body.token, req.body))      
+    })
+    .catch(function (error) {
+      // Update protected resource console logs
+      utilities.updateLogs(SERVER, "/resource :: [Post][Response][" + storage.authServerEndpoints.introspectionEndpoint + "] ::" + JSON.stringify(error.response.data))   
+      return res.status(400).send({error: error.response.data.error})    
+    })    
   }
+  else
+    return res.status(200).send(utilities.accessResource(req.body.token, req.body))
+    
 })
 
 // Initialize server
