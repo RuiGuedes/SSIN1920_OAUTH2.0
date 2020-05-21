@@ -48,6 +48,8 @@ app.get('/', function (req, res) {
                         access_token: req.session.access_token, 
                         refresh_token: req.session.refresh_token, 
                         scope: req.session.scope, 
+                        error: req.query.error,
+                        info: req.query.info,
                         logs: storage.clientLogs,
                         auth_endpoint: storage.authServerEndpoints.authorizationEndpoint + "?"
                                       + "response_type=code" + "&"
@@ -103,9 +105,7 @@ app.get('/callback', function (req, res) {
  */
 app.get('/token', function (req, res) { 
   // Construct request body 
-  let body = {    
-    state: utilities.computeHash(req.sessionID)
-  }
+  let body = {}
 
   // Determine whether it must refresh the access token or not
   if(req.session.refresh_token != null) {
@@ -138,14 +138,14 @@ app.get('/token', function (req, res) {
     req.session.access_token = response.data.access_token
     req.session.refresh_token = response.data.refresh_token
     req.session.scope = response.data.scope    
-    res.redirect('/callback?state=' + response.data.state)
+    res.redirect('/')
   })
   .catch(function (error) {
     // Update client console logs
     utilities.updateLogs(SERVER, "/token :: [Post][Response][" + storage.authServerEndpoints.tokenEndpoint + "] :: " + JSON.stringify(response.data))
 
     req.session.auth_code = req.session.access_token = req.session.refresh_token = req.session.scope = null
-    res.redirect('/callback?error=' + error.response.data.error + "&state=" + error.response.data.state)
+    res.redirect('/?error=' + error.response.data.error)
   })  
 })
 
@@ -156,7 +156,7 @@ app.get('/resource', function(req, res) {
   // Validate GET request
   if (req.query.word == "" || !/^[a-zA-Z0-9]+$/.test(req.query.word) || utilities.convertScope(req.query.submit) == null ||
      (req.query.submit == "Insert / Replace" && (req.query.meaning == "" || !/^[a-zA-Z0-9\s]+$/.test(req.query.meaning))))
-    return res.redirect('/callback?error=invalid_request&state=' + utilities.computeHash(req.sessionID))
+    return res.redirect('/?error=invalid_request')
 
   // Construct request body 
   let body = {    
@@ -166,8 +166,7 @@ app.get('/resource', function(req, res) {
       word: req.query.word,
       meaning: req.query.meaning == null ? "" : req.query.meaning,
       scope: utilities.convertScope(req.query.submit)
-    },
-    state: utilities.computeHash(req.sessionID)
+    }
   }
   
   // Update client console logs
@@ -185,15 +184,15 @@ app.get('/resource', function(req, res) {
     utilities.updateLogs(SERVER, "/token :: [Post][Response][" + storage.protectedResourceEndpoints.resourceEndpoint + "] :: " + JSON.stringify(response.data))
 
     if(response.data.info == null)
-      return res.redirect("/callback?error=forbidden&state=" + response.data.state)
+      return res.redirect("/?error=forbidden")
     else      
-      return res.redirect('/callback?info=' + response.data.info + '&state=' + response.data.state)
+      return res.redirect('/?info=' + response.data.info)
   })
   .catch(function (error) {       
     // Update client console logs 
     utilities.updateLogs(SERVER, "/token :: [Post][Response][" + storage.protectedResourceEndpoints.resourceEndpoint + "] :: " + JSON.stringify(error.response.data))
     
-    res.redirect('/callback?error=' + error.response.data.error + "&state=" + error.response.data.state)
+    res.redirect('/?error=' + error.response.data.error)
   })  
 })
 

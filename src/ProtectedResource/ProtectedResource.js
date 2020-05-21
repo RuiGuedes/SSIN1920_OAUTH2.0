@@ -92,7 +92,7 @@ app.post('/resource', function(req, res) {
         .catch(function (error) {
           // Update protected resource console logs
           utilities.updateLogs(SERVER, "/resource :: [Post][Response][" + storage.authServerEndpoints.introspectionEndpoint + "] ::" + JSON.stringify(error.response.data))   
-          return res.status(400).send({error: error.response.data.error, state: req.body.state})    
+          return res.status(400).send({error: error.response.data.error})    
         })    
       }
       else

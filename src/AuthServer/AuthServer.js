@@ -236,7 +236,7 @@ app.post('/token', function(req, res) {
       if(req.body.grant_type != "authorization_code" && req.body.grant_type != "refresh_token") {
         // Update authorization server console logs
         utilities.updateLogs(SERVER, "/token :: Detected unsupported grant type. Returning error response")
-        return res.status(400).send({error: "unsupported_grant_type", state: req.body.state})
+        return res.status(400).send({error: "unsupported_grant_type"})
       }        
       else        
         utilities.updateLogs(SERVER, "/token :: Validated request grant_type")
@@ -256,7 +256,7 @@ app.post('/token', function(req, res) {
         if(storage.authCodes[req.body.code] == null || storage.authCodes[req.body.code].redirect_uri != req.body.redirect_uri) {
           // Update authorization server console logs
           utilities.updateLogs(SERVER, "/token :: Detected invalid grant. Returning error response")  
-          return res.status(400).send({error: "invalid_grant", state: req.body.state})
+          return res.status(400).send({error: "invalid_grant"})
         }
         else 
           utilities.updateLogs(SERVER, "/token :: Validated grant")  
@@ -264,7 +264,7 @@ app.post('/token', function(req, res) {
         if(storage.authCodes[req.body.code].client_id != client.client_id) {
           // Update authorization server console logs
           utilities.updateLogs(SERVER, "/token :: Detected unauthorized client. Returning error response")
-          return res.status(400).send({error: "unauthorized_client", state: req.body.state})
+          return res.status(400).send({error: "unauthorized_client"})
         }
         else 
           utilities.updateLogs(SERVER, "/token :: Validated client authorization")
@@ -272,7 +272,7 @@ app.post('/token', function(req, res) {
         // Update authorization codes
         if(!utilities.updateAuthCodes(req.body.code)) {
           utilities.updateLogs(SERVER, "/token :: Authorization code already used once")
-          return res.status(500).send({error: "server_error", state: req.body.state})
+          return res.status(500).send({error: "server_error"})
         }
         else
           utilities.updateLogs(SERVER, "/token :: Validated authorization code")              
@@ -298,7 +298,7 @@ app.post('/token', function(req, res) {
         // Invalid refresh_token
         if(oldAccessTokenInfo == null) {
           utilities.updateLogs(SERVER, "/token :: Invalid refresh token. Returning error response")  
-          return res.status(400).send({error: "invalid_refresh_token", state: req.body.state})
+          return res.status(400).send({error: "invalid_refresh_token"})
         }
         
         // Delete previous token
@@ -329,8 +329,7 @@ app.post('/token', function(req, res) {
                       token_type: storage.accessTokens[accessToken].token_type,
                       expires_in: 3600,
                       refresh_token: storage.accessTokens[accessToken].refresh_token,
-                      scope: storage.accessTokens[accessToken].scope,
-                      state: req.body.state
+                      scope: storage.accessTokens[accessToken].scope
                       })
     }               
   }
@@ -338,7 +337,7 @@ app.post('/token', function(req, res) {
   // Update authorization server console logs
   utilities.updateLogs(SERVER, "/token :: Invalid client. Returning error response")
 
-  res.status(400).send({error: "invalid_client", state: req.body.state})
+  res.status(400).send({error: "invalid_client"})
 })
 
 /**

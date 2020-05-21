@@ -215,7 +215,7 @@ exports.isOutOfScope = function(actionScope, scope) {
  */
 exports.accessResource = function(token, request) {
     // Retrieve token information
-    let result = {info: null, state: request.state}
+    let result = {info: null}
     let tokenInfo =  storage.tokensCache[token]
   
     // Validate operation information
@@ -230,8 +230,8 @@ exports.accessResource = function(token, request) {
         result["info"] = meaning == null ? "Word not found!" : request.action.word + ": " + meaning
         break;
       case "write":
-        storage.dictionary[request.action.word] =  request.action.meaning
-        result["info"] = "Word inserted with success!"
+        result["info"] = meaning == null ? "Word inserted with success!" : "Word replaced with success!"
+        storage.dictionary[request.action.word] =  request.action.meaning        
         break;
       case "delete":
         result["info"] = meaning == null ? "Such word does not exist!" : "Word deleted with success!"
