@@ -33,7 +33,7 @@ app.use('/', express.static('../public/AuthServer'))
 ////////////
 
 let SERVER = 'Auth'
-let GENERATOR_SIZE = 128
+let GENERATOR_SIZE = 256
 
 ///////////////
 // ENDPOINTS //
@@ -126,7 +126,7 @@ app.get('/authentication', function(req, res) {
  * permissions grant phase. Otherwise the authentication fails.
  */
 app.post('/authentication', function(req, res) { 
-  if(storage.rsrcOwners[req.body.username] != null && utilities.computeHash(req.body.password) == storage.rsrcOwners[req.body.username]) { 
+  if(storage.rsrcOwners[req.body.username] != null && utilities.PBKDF2(req.body.password, storage.rsrcOwners[req.body.username].salt) == storage.rsrcOwners[req.body.username].password) { 
     // Update authorization server console logs
     utilities.updateLogs(SERVER, "/authentication :: Resource owner authentication succeeded. Redirecting to the permissions page")   
     req.session.userID = req.body.username + "." + req.session.request.state 
@@ -182,6 +182,11 @@ app.post('/permissions', function(req, res) {
   // Generate authorization code 
   let auth_code = randomstring.generate(GENERATOR_SIZE)
   
+  // Avoid duplicated codes
+  while(storage.authCodes[auth_code] != null) {
+    auth_code = randomstring.generate(GENERATOR_SIZE)
+  }
+
   // Generate code expiration date
   let d = new Date();
   let expiration = Math.round(d.getTime() / 1000) + 600
@@ -223,7 +228,7 @@ app.post('/token', function(req, res) {
   
   for(client of storage.clients) {    
     // Validate client authentication
-    if(utilities.computeHash(client.client_id) == credentials[0] && utilities.computeHash(client.client_secret) == credentials[1]) {  
+    if(credentials[0] == client.client_id && utilities.PBKDF2(credentials[1], client.salt) == client.client_secret) {  
       // Update authorization server console logs
       utilities.updateLogs(SERVER, "/token :: Client authenticated successfully")
       

@@ -10,6 +10,15 @@ exports.computeHash = function(value) {
 }
 
 /**
+ * Encrypts some value (password) using a specific salt
+ * @param {string} value some value to be encrypted
+ * @param {string} salt associated salt value
+ */
+exports.PBKDF2 = function(value, salt) {
+    return crypto.pbkdf2Sync(value, salt, 4096, 256, 'sha256').toString('hex');    
+}
+
+/**
  * Converts the scope from a human friendly manner 
  * to more technical point of view.
  */
@@ -187,15 +196,14 @@ exports.cleanupTokensCache = function() {
  * Determines whether the action scope is on the scope list or not. Returns true if it is,
  * false otherwise.
  * @param {string} actionScope Scope of the action 
- * @param {string[]} scope List of scopes
+ * @param {string} scope List of scopes
  */
 exports.isOutOfScope = function(actionScope, scope) {
-    for (let value of scope) {
-        if (value === actionScope)
-            return false
+    for(value in scope) {
+      if(value == actionScope)
+        return true
     }
-
-    return true
+    return false
 }
 
 /**

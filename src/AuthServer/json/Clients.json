@@ -2,7 +2,8 @@
     "clients": [
         {
             "client_id": "oauth-client-1",
-            "client_secret": "oauth-client-secret-1",
+            "client_secret": "4b8e67f2b097e9ca342ed56a86e2a276e0efdea31d78ef68a98422f3701aa5c7c219030eb68a18c210250e19895bd45dfd24396c5cd54ce5fe612f4c6ff1689836579af1c876f23dc9a11d11a4c85d497da9dbaf50482db200b8959224abe2fb29521cad568f91aba1ea2021d0e716efbe9a148b4b67441fcf991929a8c3433dfbe24bab9a3dad420da2389039592f756ee752c6a5d31f2bfd9da9cc3d8be80dee4513fecab558a83e8eeff804024850d43eb8385e2450a4a4dd0b69a28f5a5e8a97d4eaebe3ac1be7a0ea21f6a65ba269b558faba017ce796fa58f21532b60d708bf852d3f366fc88e7d239ec374274231e1f490803760695eaace088a299be",
+            "salt": "xEA4pGEShXSPajOAlkBlajvavwDWD4QbvRF6VCCxCEPXXZUykH6X3hmA5TA7Q5zOk6IeMs8WZyYQ90aR5wfvGEKIBRS863YDATaQrBjKHxKRj7VCvCoa1I97YWsKZQ6M2j2mwkU7mqk0ZWkLcm7MVIHNicr1JBIly0cmUbeQzsbnh4GRYZaWYtzrnkKqvIL4mY40oHG8wuCdEkQfbtAjXLSJNGHrvFMO6MFalv34vaUwksP1LxNMUZN8wUyrCSl9",
             "redirect_uris": ["http://localhost:9000/callback"],
             "scope": "read write delete"            
         }

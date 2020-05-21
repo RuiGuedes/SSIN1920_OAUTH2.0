@@ -127,8 +127,8 @@ app.get('/token', function (req, res) {
   // Send POST request to the token endpoint with confidential client authentication
   axios.post(storage.authServerEndpoints.tokenEndpoint, body, {
     auth: {
-      username: utilities.computeHash(storage.client.client_id),
-      password: utilities.computeHash(storage.client.client_secret)
+      username: storage.client.client_id,
+      password: storage.client.client_secret
     }
   })
   .then(function (response){
@@ -176,8 +176,8 @@ app.get('/resource', function(req, res) {
   // Send POST request to the protected resource
   axios.post(storage.protectedResourceEndpoints.resourceEndpoint, body,  {
     auth: {
-      username: utilities.computeHash(storage.client.client_id),
-      password: utilities.computeHash(storage.client.client_secret)
+      username: storage.client.client_id,
+      password: storage.client.client_secret
     }
   })
   .then(function (response){  
@@ -201,3 +201,5 @@ app.get('/resource', function(req, res) {
 let server = app.listen(9000, 'localhost', function () {
   console.log('OAuth Client is listening at http://localhost:%s', server.address().port)
 });
+
+// TODO - Dar auth com o client no protected resource, e depois dar auth no introspect com o o protected resource
