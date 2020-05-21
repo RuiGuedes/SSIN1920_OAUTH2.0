@@ -80,8 +80,6 @@ app.get('/callback', function (req, res) {
     req.session.auth_code = req.query.code
     req.session.access_token = req.session.refresh_token = req.session.scope = null
   }
-  else 
-    req.session.auth_code = req.session.auth_code
 
   // Update client console logs
   utilities.updateLogs(SERVER, "/callback :: Loading callback endpoint")
