@@ -352,10 +352,10 @@ app.post('/introspect', function(req, res) {
   utilities.updateLogs(SERVER, "/introspect :: [Post][Request] :: " + JSON.stringify(req.body))
 
   let credentials = new Buffer.from(req.headers.authorization.split(" ")[1], 'base64').toString('ascii').split(":")
-
+  
   // Client authentication to prevent token scanning attacks
-  for(client of storage.clients) {    
-    if(utilities.computeHash(client.client_id) == credentials[0] && utilities.computeHash(client.client_secret) == credentials[1]) {
+  for(resource of storage.resources) {      
+    if(credentials[0] == resource.resource_id && utilities.PBKDF2(credentials[1], resource.salt) == resource.resource_secret) {
       // Update authorization server console logs
       utilities.updateLogs(SERVER, "/introspect :: Client authenticated successfully")
 

@@ -1,0 +1,9 @@
+{
+    "resources": [
+        {
+            "resource_id": "oauth-resource-1",
+            "resource_secret": "d8c57fc27e3ceac0e902dab6c251c6498be2f2c864e5cbc0078bc494f47f10d65a3698ba574ba3d4c6cf831050afca02272dfa2f20ba63fcf21459857b3f57963bd5152aa1cd8df643dd2a0028272a117fb280674628aa880bcf2717f5b1c75c6f626f6f546d2c33ce0a6f1486f424541a2ff5f7f55284459773fb49363fefc80c668c9ab32dfaace270e4ff017605a91c7eaadb65c405e966994bf0363de6ce3c0a6f46aac3ee9862b0b20ab38ad93b91adde84a00ad1ef03fa5218463d2cf8175b200f21ad3af78c84d97dc9e4188ee87187b71a39c7f2b6eeacb8600ac524bba58cc9521a69aaf31bb5e0074b0297745bf661a5727cd2a36dfddbe7fa70d9",
+            "salt": "NQ1pSHnWPg6pDQf0ZOweudGa9GtaX06IVRGPvyyettC1RF3VVyYYx0JcwnYnuYod9vkqEOIK7f7SYIXM2RqCbzMVmPq751treHaOFfjs1pzB72yFv2dg7jycRHA8T0CD1lQjFVlQfc7BHL5tZMcLVHMlxHDWdrqPEniXpl9VG7r9JnTBs7kSybsIoYIaLIZecQpMUWNpwRVq7FKnTX74Nt02quLJ91nHjGCOUYri902Bhv335kJjYQAqO3jGVjU9"            
+        }
+    ]
+}

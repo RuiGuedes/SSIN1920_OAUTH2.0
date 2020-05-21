@@ -1,5 +1,5 @@
 {
-  "jg3o7TKD3POBFdcQTjCLbRamIyEoglZlZf73y7mP17uyP6BwmsnjRf5AFZAYyklTtE43pXPqoxBUJuXTAcDcTiAGJqsdsxGsfAwOmiqFr3Pf0qxPbR0lSZbL0ErXEEsL": {
+  "8Hi9reYlWa7kRLebN24mrvA7BI7ElqDRZxIOQXG8WI04HtmQ0eJtdV9eyv5BNQwwMpUesgJ0HXdjE7ploMZgHMglx46Wrug3OdmP8hPloeGttSdrymJLKsFepe34YpxoiAs1WVrRFSLUtBGqfjQYTTKscbUoueZu388KQKLu14hDjSIh5lotHdf3NQoAtzipaP9PwEvC4uumRCZoVdvvSVTpCkWHQb1yhyglRlxcIsse1yLEKWO0L55ddMGw6fDn": {
     "active": true,
     "scope": [
       "read",
@@ -9,6 +9,18 @@
     "client_id": "oauth-client-1",
     "username": "JohnDoe",
     "token_type": "bearer",
-    "exp": 1589473326
+    "exp": 1590073287
+  },
+  "VxVlURn3UzSBGvbKBetqKUKgart3se0eMi0mc7K8wl70IEWpisr8wNM34b1V9b4SHu3GgzNrytSmTfPvt7ZC1jKr2p5itHJ7gVUmYFB1NuNPpvRL2ZE10PzPufjsnWC9M9gpUKauDVAVWXgfeCl0ORaeRXf92lLWsZpGtkh6Z7uegbtQScSl4UpcWjgAaxCJbo5F4cWME6HgI26D0IL8NYRN6Sf1YHyxpLgPJLizC7mn56BbjqcDANNDHYpwVuaN": {
+    "active": true,
+    "scope": [
+      "read",
+      "write",
+      "delete"
+    ],
+    "client_id": "oauth-client-1",
+    "username": "JohnDoe",
+    "token_type": "bearer",
+    "exp": 1590073734
   }
 }

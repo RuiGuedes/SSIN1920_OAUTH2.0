@@ -234,10 +234,9 @@ exports.accessResource = function(token, request) {
         result["info"] = "Word inserted with success!"
         break;
       case "delete":
-        if(meaning != null)
-          delete storage.dictionary[request.action.word]  
-  
         result["info"] = meaning == null ? "Such word does not exist!" : "Word deleted with success!"
+        if(meaning != null)
+          delete storage.dictionary[request.action.word]          
         break;
     }
     

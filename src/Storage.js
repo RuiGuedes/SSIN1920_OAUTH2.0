@@ -21,6 +21,7 @@ exports.protectedResourceEndpoints = {
 exports.authLogs = []
 exports.clients = JSON.parse(require('fs').readFileSync('AuthServer/json/Clients.json', 'utf8')).clients
 exports.rsrcOwners = JSON.parse(require('fs').readFileSync('AuthServer/json/ResourceOwners.json', 'utf8'))
+exports.resources = JSON.parse(require('fs').readFileSync('AuthServer/json/Resources.json', 'utf8')).resources
 exports.authCodes = JSON.parse(require('fs').readFileSync('AuthServer/json/AuthCodes.json', 'utf8'))
 exports.accessTokens = JSON.parse(require('fs').readFileSync('AuthServer/json/AccessTokens.json', 'utf8'))
 
@@ -37,6 +38,7 @@ exports.updateAccessTokens = function() {
 ////////////////////////////////////
 
 exports.resourceLogs = []
+exports.resource = JSON.parse(require('fs').readFileSync('ProtectedResource/json/Data.json', 'utf8'))
 exports.tokensCache = JSON.parse(require('fs').readFileSync('ProtectedResource/json/Cache.json', 'utf8'))
 exports.dictionary = JSON.parse(require('fs').readFileSync('ProtectedResource/json/Dictionary.json', 'utf8'))
 
