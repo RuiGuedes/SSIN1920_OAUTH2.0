@@ -123,7 +123,7 @@ app.get('/token', function (req, res) {
   }  
 
   // Send POST request to the token endpoint with confidential client authentication
-  axios.post(storage.authServerEndpoints.tokenEndpoint, body, {
+  axios.post(storage.authServerEndpoints.tokenEndpoint, body, {    
     auth: {
       username: storage.client.client_id,
       password: storage.client.client_secret
@@ -158,7 +158,6 @@ app.get('/resource', function(req, res) {
 
   // Construct request body 
   let body = {    
-    token: req.session.access_token,
     client_id: storage.client.client_id,
     action: {
       word: req.query.word,
@@ -171,7 +170,11 @@ app.get('/resource', function(req, res) {
   utilities.updateLogs(SERVER, "/token :: [Post][Response][" + storage.protectedResourceEndpoints.resourceEndpoint + "] :: " + JSON.stringify(body))
 
   // Send POST request to the protected resource
-  axios.post(storage.protectedResourceEndpoints.resourceEndpoint, body)
+  axios.post(storage.protectedResourceEndpoints.resourceEndpoint, body, {
+    headers: {
+      'Authorization': `Basic ${req.session.access_token}`
+    }
+  })
   .then(function (response){  
     // Update client console logs
     utilities.updateLogs(SERVER, "/token :: [Post][Response][" + storage.protectedResourceEndpoints.resourceEndpoint + "] :: " + JSON.stringify(response.data))

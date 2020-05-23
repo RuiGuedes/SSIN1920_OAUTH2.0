@@ -225,7 +225,7 @@ app.post('/token', function(req, res) {
   utilities.updateLogs(SERVER, "/token :: [Post][Request] :: " + JSON.stringify(req.body))
 
   let credentials = new Buffer.from(req.headers.authorization.split(" ")[1], 'base64').toString('ascii').split(":")
-  
+    
   for(client of storage.clients) {    
     // Validate client authentication
     if(credentials[0] == client.client_id && utilities.PBKDF2(credentials[1], client.salt) == client.client_secret) {  
