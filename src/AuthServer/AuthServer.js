@@ -1,5 +1,6 @@
 let helmet = require("helmet")
 let express = require("express")
+let base64url = require('base64url')
 let storage = require("../Storage.js")
 let bodyParser = require('body-parser')
 let session = require("express-session")
@@ -56,14 +57,14 @@ app.get('/', function(_, res) {
 app.get('/authorize', function(req, res) {  
   // Update authorization server console logs
   utilities.updateLogs(SERVER, "/authorize :: Received the following request :: " + JSON.stringify(req.query))
-  
+
   // Validate request required fields and redirect uri
   if(req.query.client_id == null || !utilities.validRedirectUri(req.query.client_id, req.query.redirect_uri, storage.clients)) {
     // Update authorization server console logs
     utilities.updateLogs(SERVER, "/authorize :: Detected an invalid request. Redirecting the client to its default endpoint")
     return res.redirect('http://localhost:9000/')
   }
-  else if(req.query.response_type == null) {
+  else if(req.query.response_type == null || req.query.code_challenge == null || req.query.code_challenge_method == null) {
     // Update authorization server console logs
     utilities.updateLogs(SERVER, "/authorize :: Detected an invalid request. Redirecting the client to the specified redirection uri")
     return res.redirect(req.query.redirect_uri + "?error=invalid_request&state=" + req.query.state)
@@ -207,6 +208,7 @@ app.post('/permissions', function(req, res) {
                                                          "redirect_uri": req.session.request.redirect_uri,
                                                          "scope": req.body.permission,
                                                          "username": req.session.userID.split('.')[0],
+                                                         "code_challenge": req.session.request.code_challenge,
                                                          "used": false
                                                         }
                                             
@@ -267,7 +269,7 @@ app.post('/token', function(req, res) {
         }
         else 
           utilities.updateLogs(SERVER, "/token :: Validated grant")  
-
+        
         if(storage.authCodes[utilities.computeHash(req.body.code)].client_id != client.client_id) {
           // Update authorization server console logs
           utilities.updateLogs(SERVER, "/token :: Detected unauthorized client. Returning error response")
@@ -275,6 +277,17 @@ app.post('/token', function(req, res) {
         }
         else 
           utilities.updateLogs(SERVER, "/token :: Validated client authorization")
+
+        // Proof Key for Code Exchange
+        if(req.body.code_verifier == null || 
+          base64url(utilities.computeHash(req.body.code_verifier)) != storage.authCodes[utilities.computeHash(req.body.code)].code_challenge
+          ) {
+          // Update authorization server console logs
+          utilities.updateLogs(SERVER, "/token :: Detected invalid grant. Returning error response")
+          return res.status(400).send({error: "invalid_grant"})
+        }
+        else 
+          utilities.updateLogs(SERVER, "/token :: Proof Key for Code Exchange validated")
 
         // Update authorization codes
         if(!utilities.updateAuthCodes(utilities.computeHash(req.body.code))) {

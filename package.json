@@ -7,6 +7,7 @@
 		"pug": "2.0.4",
 		"randomstring": "1.1.5",
 		"axios": "0.19.2",
-		"helmet": "3.22.0"
+		"helmet": "3.22.0",
+		"base64url": "3.0.1"
 	}
 }

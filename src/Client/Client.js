@@ -1,9 +1,11 @@
 let axios = require('axios')
 let express = require("express")
+let base64url = require('base64url')
 let session = require("express-session")
 let utilities = require("../Utilities.js")
 let storage = require("../Storage.js")
 let bodyParser = require('body-parser')
+let randomstring = require("randomstring")
 
 ////////////////
 // APP CONFIG //
@@ -32,6 +34,10 @@ app.use('/', express.static('../public/Client'))
 ////////////
 
 let SERVER = 'Client'
+let GENERATOR_SIZE = 256
+
+// Create code_verifier
+storage.client.code_verifier = randomstring.generate(GENERATOR_SIZE)
 
 ///////////////
 // ENDPOINTS //
@@ -41,9 +47,13 @@ let SERVER = 'Client'
  * Default endpoint
  */
 app.get('/', function (req, res) {
+  // Add error to the console log
+  if(req.query.error != null)
+    utilities.updateLogs(SERVER, "/callback :: Detected the following error: " + req.query.error)
+
   // Update client console logs
   utilities.updateLogs(SERVER, "/ :: Loading default endpoint")
-  
+
   res.render('Index', { auth_code: req.session.auth_code,
                         access_token: req.session.access_token, 
                         refresh_token: req.session.refresh_token, 
@@ -55,7 +65,11 @@ app.get('/', function (req, res) {
                                       + "response_type=code" + "&"
                                       + "client_id=" + storage.client.client_id + "&"
                                       + "redirect_uri=" + storage.client.redirect_uris[0] + "&"
-                                      + "scope=" + storage.client.scope	 + "&state=" + utilities.computeHash(req.sessionID)})
+                                      + "scope=" + storage.client.scope	 + "&state=" + utilities.computeHash(req.sessionID) + "&"
+                                      + "code_challenge=" + base64url(utilities.computeHash(storage.client.code_verifier)) + "&"
+                                      + "code_challenge_method=S256"
+                        }
+            )
 })
 
 /**
@@ -80,10 +94,14 @@ app.get('/callback', function (req, res) {
     req.session.auth_code = req.query.code
     req.session.access_token = req.session.refresh_token = req.session.scope = null
   }
+  
+  // Add error to the console log
+  if(req.query.error != null)
+    utilities.updateLogs(SERVER, "/callback :: Detected the following error: " + req.query.error)
 
   // Update client console logs
   utilities.updateLogs(SERVER, "/callback :: Loading callback endpoint")
-  
+
   res.render('Index', { auth_code: req.session.auth_code,
                         access_token: req.session.access_token, 
                         refresh_token: req.session.refresh_token, 
@@ -95,7 +113,11 @@ app.get('/callback', function (req, res) {
                                       + "response_type=code" + "&"
                                       + "client_id=" + storage.client.client_id + "&"
                                       + "redirect_uri=" + storage.client.redirect_uris[0] + "&"
-                                      + "scope=" + storage.client.scope	 + "&state=" + utilities.computeHash(req.sessionID)})
+                                      + "scope=" + storage.client.scope	 + "&state=" + utilities.computeHash(req.sessionID) + "&"
+                                      + "code_challenge=" + base64url(utilities.computeHash(storage.client.code_verifier)) + "&"
+                                      + "code_challenge_method=S256"
+                      }
+            )
 })
 
 /**
@@ -117,6 +139,7 @@ app.get('/token', function (req, res) {
     body.grant_type = "authorization_code"
     body.code = req.session.auth_code
     body.redirect_uri = storage.client.redirect_uris[0]
+    body.code_verifier = storage.client.code_verifier
     
     // Update client console logs
     utilities.updateLogs(SERVER, "/token :: [Post][Request][" + storage.authServerEndpoints.tokenEndpoint + "] :: " + JSON.stringify(body))
@@ -140,7 +163,7 @@ app.get('/token', function (req, res) {
   })
   .catch(function (error) {
     // Update client console logs
-    utilities.updateLogs(SERVER, "/token :: [Post][Response][" + storage.authServerEndpoints.tokenEndpoint + "] :: " + JSON.stringify(response.data))
+    utilities.updateLogs(SERVER, "/token :: [Post][Response][" + storage.authServerEndpoints.tokenEndpoint + "] :: " + JSON.stringify(error.response.data))
 
     req.session.auth_code = req.session.access_token = req.session.refresh_token = req.session.scope = null
     res.redirect('/?error=' + error.response.data.error)
