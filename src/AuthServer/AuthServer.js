@@ -29,7 +29,7 @@ app.set('views', '../public/AuthServer')
 app.set('json spaces', 4)
 
 app.use('/', express.static('../public/AuthServer'))
-app.use(helmet({frameguard: { action: 'SAMEORIGIN' }}))
+app.use(helmet({frameguard: { action: 'DENY' }}))
 
 ////////////
 // GLOBAL //
@@ -61,8 +61,7 @@ app.get('/authorize', function(req, res) {
   // Validate request required fields and redirect uri
   if(req.query.client_id == null || !utilities.validRedirectUri(req.query.client_id, req.query.redirect_uri, storage.clients)) {
     // Update authorization server console logs
-    utilities.updateLogs(SERVER, "/authorize :: Detected an invalid request. Redirecting the client to its default endpoint")
-    return res.redirect('http://localhost:9000/')
+    return utilities.updateLogs(SERVER, "/authorize :: Detected an invalid request. Redirecting the client to its default endpoint")
   }
   else if(req.query.response_type == null || req.query.code_challenge == null || req.query.code_challenge_method == null) {
     // Update authorization server console logs
