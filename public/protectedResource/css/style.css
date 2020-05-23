@@ -69,6 +69,7 @@ body h2 {
     padding: 10px;
     overflow-y: scroll; 
     background-color: var(--transparent-brand-color);
+    overflow-wrap: break-word;
 }
 
 .console-icon {
