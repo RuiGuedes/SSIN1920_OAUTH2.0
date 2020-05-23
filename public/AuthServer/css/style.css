@@ -61,6 +61,7 @@ body h2 {
 .info span{
     color: var(--brand-color);
     font-weight: bold;
+    overflow-wrap: break-word;
 }
 
 .info > form > input {
@@ -120,6 +121,7 @@ a.btn.btn-default:hover {
     padding: 10px;
     overflow-y: scroll; 
     background-color: var(--transparent-brand-color);
+    overflow-wrap: break-word;
 }
 
 .console-icon {
