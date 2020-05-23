@@ -56,7 +56,12 @@ app.get('/authorize', function(req, res) {
   utilities.updateLogs(SERVER, "/authorize :: Received the following request :: " + JSON.stringify(req.query))
   
   // Validate request required fields and redirect uri
-  if(req.query.response_type == null || req.query.client_id == null || !utilities.validRedirectUri(req.query.client_id, req.query.redirect_uri, storage.clients)) {
+  if(req.query.client_id == null || !utilities.validRedirectUri(req.query.client_id, req.query.redirect_uri, storage.clients)) {
+    // Update authorization server console logs
+    utilities.updateLogs(SERVER, "/authorize :: Detected an invalid request. Redirecting the client to its default endpoint")
+    return res.redirect('http://localhost:9000/')
+  }
+  else if(req.query.response_type == null) {
     // Update authorization server console logs
     utilities.updateLogs(SERVER, "/authorize :: Detected an invalid request. Redirecting the client to the specified redirection uri")
     return res.redirect(req.query.redirect_uri + "?error=invalid_request&state=" + req.query.state)
@@ -225,7 +230,7 @@ app.post('/token', function(req, res) {
   utilities.updateLogs(SERVER, "/token :: [Post][Request] :: " + JSON.stringify(req.body))
 
   let credentials = new Buffer.from(req.headers.authorization.split(" ")[1], 'base64').toString('ascii').split(":")
-    
+
   for(client of storage.clients) {    
     // Validate client authentication
     if(credentials[0] == client.client_id && utilities.PBKDF2(credentials[1], client.salt) == client.client_secret) {  

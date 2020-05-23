@@ -1,15 +1,14 @@
 {
-  "ENOOCt2jUCAINAmKmAJWsyfRnUVbd7xRQl7MwjN7E0Z6nnfEhgSrPWMhOF34FIqOPAYdZhf2rgqAF14SE2tfblcELJnSYs4AE6uL4lhFSgFs8m57wzHO0Gzl2ip6UqfLOgg2Qkf2YZR9MoeEXDAqFxqVOBHlphvf3SwnBIVx2L843F9Qd8kIVqG9NNL3NYquvXHru9nSkzdbga8goHHwiL4Ph3Jq3PH3J3p3QtPfyLlrCulR1VGuBSYtaC7Ane5V": {
+  "FSUp8FKCz7F4h5TqRrpRUR2EmhkpQuyzz5MUX4grzGX24N5O9o5gWSj4iAYaozEu6gqI2hYPikBcycE8YiTEQVn4PcVeR1Z3vdJsSW0qoAtFKHYBXcpsmGImmxOovvajjp81TMiZaw1pS4KYkoVpKlsx83oWgRUeXgF3nnr5KJu3623uMxAOJuesHGKlfZ5ihDQLwUZMTzXqluBRVEarBoqwgX8e0jM8mVzlW6YfED3AytvsPmmaz7dbNxNzWcao": {
     "token_type": "bearer",
-    "expires_in": 1590230591,
-    "refresh_token": "hz6XthkJH1Qs76PDLZB6x52EA5gN4quksS2HDLhI4adDSe8Tym0WFWpUn8YaF3GbKCRTn6pivTEhp3EJAVZuA50f1nX30auCVsccq7PvO7IQlYyo3jG1UFpt1914A2S25ShUbbZVGLm2W7ZdK6OrPDq5nQdPVhPUUqlJTI8rbU15SBhf69nUVJ7ppwakrIKs7iizUzF6uYicMaTVw1cNV7jYEkZ6uB9Cjgt9IBtNHO9zh9ldQ5ZMGXPdy6RENEZM",
-    "refresh_token_expiration": 1590313391,
-    "auth_code": "arYHAVJXj19JXlR1d1DdzA5fluLwmdeUo1UtQMDNJXxOAZ0GOdytVIlzAt1vXET0cNH9qNq5QMWNbuMQoNnkc7jVTrLXnlpoqrBMOLm1OKqeRrwPTn3Rqlc7WPCoARDbIjhi31xlGxPE3qxopKcEmhJoTEeM3yY0nvsLLoSGUoTpqFJPAdMurUK3luZPdRB7SGnDVdRlUy5DICRuo88HOzBW0CT0k15CLns4vMvSpzvTlKUCXOwLZqUfb8dzyUs8",
+    "expires_in": 1590231274,
+    "refresh_token": "X8LKP0NpcHbUnAloMYndMkrvHFnp7nQPOnBWqFpfgorKmiux8Bfiw8KUPziPA4ahkzOfBPr56mppLkvTqBtMWXifweXhBkBukqeisQkcyAQnC56Cko1Wbl9m4T4WerZEwDf3zroPZcgZzR7f3v9il3ReQdlJK6UwvRunCQvcHd3g591CVSmr7ICWRY767KcXZZuAufFOmQ0zPbwYOUeBP3d5hFP3BUllpTKTk5iLwMzaY361wU8gw8omkjZ81bpD",
+    "refresh_token_expiration": 1590314074,
+    "auth_code": "n8WhZKqIp7dGftcBv1F7NQUnb9FM7BeHgXUKGl8Tyd9LTS993pBcVyQ1rd3HvEoTQncoRu9xQvsjzSAcubxm4Oko1XBqregOjYpckz0E8KD0XFe6i4erB9SCS2dQnKaLBcZ58YLgzal94ljdBUyLonnfHY1V7V62qJPFwAoHx113vWAnNzI8Za1GElMpme08LCAcHD7iwt3ZqLtChrulhxZhEYNDXu3UQbbZFiHPxKNkBI9IGBvwslrPTCdGtGSR",
     "client_id": "oauth-client-1",
     "username": "JohnDoe",
     "scope": [
       "read",
-      "write",
       "delete"
     ]
   }

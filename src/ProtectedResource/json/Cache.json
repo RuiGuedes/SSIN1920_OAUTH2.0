@@ -22,5 +22,16 @@
     "username": "JohnDoe",
     "token_type": "bearer",
     "exp": 1590230591
+  },
+  "FSUp8FKCz7F4h5TqRrpRUR2EmhkpQuyzz5MUX4grzGX24N5O9o5gWSj4iAYaozEu6gqI2hYPikBcycE8YiTEQVn4PcVeR1Z3vdJsSW0qoAtFKHYBXcpsmGImmxOovvajjp81TMiZaw1pS4KYkoVpKlsx83oWgRUeXgF3nnr5KJu3623uMxAOJuesHGKlfZ5ihDQLwUZMTzXqluBRVEarBoqwgX8e0jM8mVzlW6YfED3AytvsPmmaz7dbNxNzWcao": {
+    "active": true,
+    "scope": [
+      "read",
+      "delete"
+    ],
+    "client_id": "oauth-client-1",
+    "username": "JohnDoe",
+    "token_type": "bearer",
+    "exp": 1590231274
   }
 }
