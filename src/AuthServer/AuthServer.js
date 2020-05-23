@@ -190,7 +190,7 @@ app.post('/permissions', function(req, res) {
   let auth_code = randomstring.generate(GENERATOR_SIZE)
   
   // Avoid duplicated codes
-  while(storage.authCodes[auth_code] != null) {
+  while(storage.authCodes[utilities.computeHash(auth_code)] != null) {
     auth_code = randomstring.generate(GENERATOR_SIZE)
   }
 
@@ -202,13 +202,13 @@ app.post('/permissions', function(req, res) {
   utilities.revokeAuthCode(req.session.request.client_id)  
   utilities.updateLogs(SERVER, "/permissions :: Revoke previous authorization codes and associated tokens")    
   
-  storage.authCodes[auth_code] = {"client_id": req.session.request.client_id, 
-                                  "expiration": expiration, 
-                                  "redirect_uri": req.session.request.redirect_uri,
-                                  "scope": req.body.permission,
-                                  "username": req.session.userID.split('.')[0],
-                                  "used": false
-                                }
+  storage.authCodes[utilities.computeHash(auth_code)] = {"client_id": req.session.request.client_id, 
+                                                         "expiration": expiration, 
+                                                         "redirect_uri": req.session.request.redirect_uri,
+                                                         "scope": req.body.permission,
+                                                         "username": req.session.userID.split('.')[0],
+                                                         "used": false
+                                                        }
                                             
   // Update storage data
   storage.updateAuthCodes()
@@ -260,7 +260,7 @@ app.post('/token', function(req, res) {
 
       // Authorization server MUST validations
       if(req.body.grant_type == "authorization_code") {
-        if(storage.authCodes[req.body.code] == null || storage.authCodes[req.body.code].redirect_uri != req.body.redirect_uri) {
+        if(storage.authCodes[utilities.computeHash(req.body.code)] == null || storage.authCodes[utilities.computeHash(req.body.code)].redirect_uri != req.body.redirect_uri) {
           // Update authorization server console logs
           utilities.updateLogs(SERVER, "/token :: Detected invalid grant. Returning error response")  
           return res.status(400).send({error: "invalid_grant"})
@@ -268,7 +268,7 @@ app.post('/token', function(req, res) {
         else 
           utilities.updateLogs(SERVER, "/token :: Validated grant")  
 
-        if(storage.authCodes[req.body.code].client_id != client.client_id) {
+        if(storage.authCodes[utilities.computeHash(req.body.code)].client_id != client.client_id) {
           // Update authorization server console logs
           utilities.updateLogs(SERVER, "/token :: Detected unauthorized client. Returning error response")
           return res.status(400).send({error: "unauthorized_client"})
@@ -277,7 +277,7 @@ app.post('/token', function(req, res) {
           utilities.updateLogs(SERVER, "/token :: Validated client authorization")
 
         // Update authorization codes
-        if(!utilities.updateAuthCodes(req.body.code)) {
+        if(!utilities.updateAuthCodes(utilities.computeHash(req.body.code))) {
           utilities.updateLogs(SERVER, "/token :: Authorization code already used once")
           return res.status(500).send({error: "server_error"})
         }
@@ -288,10 +288,10 @@ app.post('/token', function(req, res) {
                     "expires_in": currTime + 3600, 
                     "refresh_token": randomstring.generate(GENERATOR_SIZE),
                     "refresh_token_expiration": currTime + 3600*24,
-                    "auth_code": req.body.code,
+                    "auth_code": utilities.computeHash(req.body.code),
                     "client_id": client.client_id,
-                    "username": storage.authCodes[req.body.code].username,
-                    "scope": storage.authCodes[req.body.code].scope
+                    "username": storage.authCodes[utilities.computeHash(req.body.code)].username,
+                    "scope": storage.authCodes[utilities.computeHash(req.body.code)].scope
                   }
         
         // Update authorization server console logs
@@ -299,9 +299,9 @@ app.post('/token', function(req, res) {
       }
       else {         
         // Retrieve information associated with the refresh_token
-        let oldAccessTokenInfo = utilities.validateRefreshToken(req.body.refresh_token, client.client_id) 
+        let oldAccessTokenInfo = utilities.validateRefreshToken(utilities.computeHash(req.body.refresh_token), client.client_id) 
         utilities.updateLogs(SERVER, "/token :: Retrieve information associated with the refresh_token")  
-
+        
         // Invalid refresh_token
         if(oldAccessTokenInfo == null) {
           utilities.updateLogs(SERVER, "/token :: Invalid refresh token. Returning error response")  
@@ -311,7 +311,7 @@ app.post('/token', function(req, res) {
         // Delete previous token
         delete storage.accessTokens[oldAccessTokenInfo.accessToken]
         utilities.updateLogs(SERVER, "/token :: Removed old access token information")  
-
+        
         tokenInfo = {"token_type": "bearer", 
                     "expires_in": currTime + 3600, 
                     "refresh_token": randomstring.generate(GENERATOR_SIZE),
@@ -324,19 +324,23 @@ app.post('/token', function(req, res) {
         // Update authorization server console logs
         utilities.updateLogs(SERVER, "/token :: Generated new access token using the refresh token. Token information :: " + JSON.stringify(tokenInfo))
       }            
-                                                
+      
+      // Retrieve refresh token and hash it
+      let refresh_token_raw = tokenInfo.refresh_token
+      tokenInfo.refresh_token = utilities.computeHash(refresh_token_raw)
+      
       // Update storage data
-      storage.accessTokens[accessToken] = tokenInfo
+      storage.accessTokens[utilities.computeHash(accessToken)] = tokenInfo
       storage.updateAccessTokens()
-
+      
       // Update authorization server console logs
       utilities.updateLogs(SERVER, "/token :: Returning token information back to the client")
-
+      
       return res.send({access_token: accessToken,
-                      token_type: storage.accessTokens[accessToken].token_type,
+                      token_type: storage.accessTokens[utilities.computeHash(accessToken)].token_type,
                       expires_in: 3600,
-                      refresh_token: storage.accessTokens[accessToken].refresh_token,
-                      scope: storage.accessTokens[accessToken].scope
+                      refresh_token: refresh_token_raw,
+                      scope: storage.accessTokens[utilities.computeHash(accessToken)].scope
                       })
     }               
   }
@@ -366,7 +370,7 @@ app.post('/introspect', function(req, res) {
       utilities.updateLogs(SERVER, "/introspect :: Client authenticated successfully")
 
       // Token variables
-      let tokenInfo = storage.accessTokens[req.body.token]
+      let tokenInfo = storage.accessTokens[utilities.computeHash(req.body.token)]
       let d = new Date();
       let currTime = Math.round(d.getTime() / 1000)
       

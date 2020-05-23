@@ -196,5 +196,3 @@ app.get('/resource', function(req, res) {
 let server = app.listen(9000, 'localhost', function () {
   console.log('OAuth Client is listening at http://localhost:%s', server.address().port)
 });
-
-// TODO - Dar auth com o client no protected resource, e depois dar auth no introspect com o o protected resource

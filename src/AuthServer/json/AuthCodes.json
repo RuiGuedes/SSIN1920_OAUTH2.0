@@ -1,7 +1,7 @@
 {
-  "FLVC5aZP04IauZISWWrTwVnB6cypxx2sf9oeD3Al4L2ZahpnuZWlzKK7VDqpziE84CcXihnzORxQoi2PPYwKMmsQxidvZTeGnbCzXT2Pn0pctkvOAXtsw2HMZZy5qNawLWCEBjdFB3cYrkBmoKQjd2z4AtduMCIrHRjZjDmS17bKGZBxDWkQIRByv4Tnv8PAqlQXpqQqt3jN5QDZ0OXHQpnUZXRyivIRCwfQtt1lPRPUVHNVFWql7Wap7QGw0ysT": {
+  "dc5361322b176b9a5220ece24e26f82592f7780b6b1b84c59a50f4922fcaeec3": {
     "client_id": "oauth-client-1",
-    "expiration": 1590229527,
+    "expiration": 1590232020,
     "redirect_uri": "http://localhost:9000/callback",
     "scope": [
       "read",
