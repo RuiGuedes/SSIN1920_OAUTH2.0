@@ -1,3 +1,4 @@
+let helmet = require("helmet")
 let express = require("express")
 let storage = require("../Storage.js")
 let bodyParser = require('body-parser')
@@ -27,6 +28,7 @@ app.set('views', '../public/AuthServer')
 app.set('json spaces', 4)
 
 app.use('/', express.static('../public/AuthServer'))
+app.use(helmet({frameguard: { action: 'SAMEORIGIN' }}))
 
 ////////////
 // GLOBAL //

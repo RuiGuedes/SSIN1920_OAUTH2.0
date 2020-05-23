@@ -1,10 +1,11 @@
 {
-  "n8WhZKqIp7dGftcBv1F7NQUnb9FM7BeHgXUKGl8Tyd9LTS993pBcVyQ1rd3HvEoTQncoRu9xQvsjzSAcubxm4Oko1XBqregOjYpckz0E8KD0XFe6i4erB9SCS2dQnKaLBcZ58YLgzal94ljdBUyLonnfHY1V7V62qJPFwAoHx113vWAnNzI8Za1GElMpme08LCAcHD7iwt3ZqLtChrulhxZhEYNDXu3UQbbZFiHPxKNkBI9IGBvwslrPTCdGtGSR": {
+  "FLVC5aZP04IauZISWWrTwVnB6cypxx2sf9oeD3Al4L2ZahpnuZWlzKK7VDqpziE84CcXihnzORxQoi2PPYwKMmsQxidvZTeGnbCzXT2Pn0pctkvOAXtsw2HMZZy5qNawLWCEBjdFB3cYrkBmoKQjd2z4AtduMCIrHRjZjDmS17bKGZBxDWkQIRByv4Tnv8PAqlQXpqQqt3jN5QDZ0OXHQpnUZXRyivIRCwfQtt1lPRPUVHNVFWql7Wap7QGw0ysT": {
     "client_id": "oauth-client-1",
-    "expiration": 1590228270,
+    "expiration": 1590229527,
     "redirect_uri": "http://localhost:9000/callback",
     "scope": [
       "read",
+      "write",
       "delete"
     ],
     "username": "JohnDoe",
