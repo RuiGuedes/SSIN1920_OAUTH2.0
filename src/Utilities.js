@@ -70,11 +70,11 @@ exports.validRedirectUri = function(client_id, redirect_uri, clients) {
  * @param {Array} scope scope array
  */
 exports.validScope = function(scope) {
-for(elem of scope) {
-    if(elem != "read" && elem != "write" && elem != "delete")
-    return false
-}
-return scope.length > 3 ? false : true
+    for(elem of scope) {
+        if(elem != "read" && elem != "write" && elem != "delete")
+        return false
+    }
+    return scope.length > 3 ? false : true
 }
 
 /**
@@ -196,14 +196,10 @@ exports.cleanupTokensCache = function() {
  * Determines whether the action scope is on the scope list or not. Returns true if it is,
  * false otherwise.
  * @param {string} actionScope Scope of the action 
- * @param {string} scope List of scopes
+ * @param {string[]} scope List of scopes
  */
 exports.isOutOfScope = function(actionScope, scope) {
-    for(value in scope) {
-      if(value == actionScope)
-        return true
-    }
-    return false
+    return scope.find(value => value === actionScope) === undefined
 }
 
 /**

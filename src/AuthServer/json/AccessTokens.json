@@ -1,16 +1,15 @@
 {
-  "c0cfdf6ff03c71fc476d1a6b7d3e8d4c1c773afe847c960b5ce18b9d84299929": {
+  "ffcd712f5601b4d7c542bee29c1aedb01e91a8e488a7c35e0b871e69be76c163": {
     "token_type": "bearer",
-    "expires_in": 1590254410,
-    "refresh_token": "361c9ec5c557428346ca2f81ef0f4a45364f2a18b9f300d4f7703ed6ed9fb4ee",
-    "refresh_token_expiration": 1590337210,
-    "auth_code": "21318d61bcf85e4d44d194328df26b82a386a08f1295c285a8a0bdbd8cd624a5",
+    "expires_in": 1590434470,
+    "refresh_token": "abead4a9f897b2dcb6093b895617cbb636f1781a7c25b79f59c6f84bf864ce8b",
+    "refresh_token_expiration": 1590517270,
+    "auth_code": "5c7da6f0991c80e50cc6a5ff53f417051e71ae811f9eb8b89a9ba44e730e239e",
     "client_id": "oauth-client-1",
     "username": "JohnDoe",
     "scope": [
       "read",
-      "write",
-      "delete"
+      "write"
     ]
   }
 }

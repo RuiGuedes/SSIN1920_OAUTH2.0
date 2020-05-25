@@ -195,7 +195,7 @@ app.get('/resource', function(req, res) {
   // Send POST request to the protected resource
   axios.post(storage.protectedResourceEndpoints.resourceEndpoint, body, {
     headers: {
-      'Authorization': `Basic ${req.session.access_token}`
+      'Authorization': `Bearer ${req.session.access_token}`
     }
   })
   .then(function (response){  
