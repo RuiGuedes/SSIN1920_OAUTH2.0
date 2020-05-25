@@ -1,14 +1,15 @@
 {
-  "5c7da6f0991c80e50cc6a5ff53f417051e71ae811f9eb8b89a9ba44e730e239e": {
+  "fe981696e7a40a092eee025dbc6416bf1ae8b9232966a4edae7be20c77bc603f": {
     "client_id": "oauth-client-1",
-    "expiration": 1590431468,
+    "expiration": 1590445176,
     "redirect_uri": "http://localhost:9000/callback",
     "scope": [
       "read",
-      "write"
+      "write",
+      "delete"
     ],
     "username": "JohnDoe",
-    "code_challenge": "MjhkZTY5NjQ4MmViNWMwODU3MDgwMzc1Mjc3NWQyZjM4ODdiM2I2N2UxM2RjYTY1NGVkMTYwZTFkMzYzMjUxZA",
+    "code_challenge": "NGVmNzlmZTExMzg3MzdkMjhkZmQ4N2MxOWY5MzE1MGIwMGY1YzE2YWMyZDc4M2NjY2ZhMGYzOGExZjQyZmU1MA",
     "used": true
   }
 }

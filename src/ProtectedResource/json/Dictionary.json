@@ -1,3 +1,4 @@
 {
-  "Success": "pocrl"
+  "Success": "Everything is working fine",
+  "Insuccess": "Not working properly"
 }

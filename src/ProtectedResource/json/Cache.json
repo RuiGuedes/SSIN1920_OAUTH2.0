@@ -1,57 +1,14 @@
 {
-  "AWxPoAT7FRN7rK49upzHPs0qKJGXVojdT2X59ghHD4WS5vptE0elARLNnPDJf0u9s9cmcv4uY1ktuXum6zs8ULHgC6rysenmShrzz8Z7aZLzLXSr7cYk8TC0hiUO31OOWnKTuaT349MXLEulhRr5LeRDtvcCHSNde9hZ1ukljBaiLzDyfBKFP7fN4MonZgDDeGhoFd6h7IAESe2nvF1xhp7KYiiblop0LEVwCn2uQxj9nZDhUo31805DzKfKs9EL": {
+  "pBQ9jm8o5R2DZi1nxNa2Z4q7IfmYgOLTqYJbS0jhKn1ghEvFHv4ZdtCxaSC5ljRNpQwdriQqdvac5GKRaV18ScPapWxPSVJBWZEy9q3JelqJPaNVcOTMKpFFTzvECTuF1oBpmvBkYUN3oxYomHqGmUBLkK42wlnLmJu7tcjmeZjTTkh59K1lUOZUOmoQBpejV8LvP8N0cC2sfIi8RDDl8vTxzQZuEFVr59s8f4c5BGGsYxBIx0pOaOiPt1Cf1RCo": {
     "active": true,
     "scope": [
       "read",
-      "write"
+      "write",
+      "delete"
     ],
     "client_id": "oauth-client-1",
     "username": "JohnDoe",
     "token_type": "bearer",
-    "exp": 1590432449
-  },
-  "0hYMnJCe2DcDRoEjAoKPP1P7zXt3JHEZffcIw4GcINkSU35AsLF64QwEJtMp7fTS1fBq2ZlMU9lQmrm7Ho0QwKrBTgzKLmqM2ucR8FTn4h0fFD7A22maQywDgdHRzfYr6Uu9x67BL2ypaUKdL8RjAb6bEG1vyV7n44L56Q6N5eRhTMBGnlMgKqFBUc1H6UVnWS2eAiotI8T7FJ9h09O55PKHrjkOpil9dqx37F8h3prTkmK8RhYe2D3ZLkmD2bMj": {
-    "active": true,
-    "scope": [
-      "read",
-      "write"
-    ],
-    "client_id": "oauth-client-1",
-    "username": "JohnDoe",
-    "token_type": "bearer",
-    "exp": 1590432772
-  },
-  "UFAtr1OqNM2zGQ8LPwqfxUEFCuAUB8fQjyLlhb1b5qxP9uOmoOCzi8Kk1gg04mFP9aNjduQfuPi8X3ytsMwX5VXZloEfQKWpbWZthGZCw500U270WRNbSIFC6YbUS9UeZBHY3MFHo5FgEWwJhMhzEPMv63cyLtfW7grAszYhoX3sc3mM4uwoY15RzMwuVMq8Kyc26pcwOIeGEYoykwd7zShIWHenOMNbEdmREtpd7zROWPvNmyIzGhHOeJQAloXI": {
-    "active": true,
-    "scope": [
-      "read",
-      "write"
-    ],
-    "client_id": "oauth-client-1",
-    "username": "JohnDoe",
-    "token_type": "bearer",
-    "exp": 1590433443
-  },
-  "9V4MBKBKPfNyYsuZBJ0aPZgCGMVk2qRnskDPXT5Y5gxZkXNOJtKEXZgwLKKJnizNXBFDJxSfGcTOHgHh6iEVvUbosR86eznkNX9Xd7v9YvkeyNCIC8IlDpoWi3Sh4rNG08RA8ZXKhyIJEyxIKoMHHzluoaFvP4Zs65RJzBgKYIflv4UBOHCs013HeNR9FEYFlpWOAFtyaT1vDecec46J47GOazR2LUvG07RL4bkrXMYCaw0DI2Ka11Je2FtH1nfK": {
-    "active": true,
-    "scope": [
-      "read",
-      "write"
-    ],
-    "client_id": "oauth-client-1",
-    "username": "JohnDoe",
-    "token_type": "bearer",
-    "exp": 1590434040
-  },
-  "BtNe0Xu2h6HhsB227luBgKwHnrfjX8K2pHPe0AnLbGjmYMPtxG04478S255ELS2j4puagS1FbYv6FFmfQluDvaNCqEylLcYrjqm57Ywci9AkmmQlgjT4TGIBgR9UZb0kmDdXjq1X9WC0myi39SIiDaZbiIuTFecuC5mRV6LAUInL14Kr7PdVfnDhmkTywtl8lzyidu0MQyO6ZR4qEZeTeaPDBgloXdJ7fj9ASQBunb9YPYlxrS3nJbx6rsUBN4vt": {
-    "active": true,
-    "scope": [
-      "read",
-      "write"
-    ],
-    "client_id": "oauth-client-1",
-    "username": "JohnDoe",
-    "token_type": "bearer",
-    "exp": 1590434470
+    "exp": 1590448179
   }
 }
